@@ -10,6 +10,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+    ('share/' + package_name + '/launch', ['launch/behavior_launch.xml']),  # Change the filename as needed
     ],
     install_requires=['setuptools','rclpy'],
     zip_safe=True,
@@ -20,8 +21,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-           'fake_hover = behavior.base_behavior:FakeHoverBehavior',
-            'fake_forward = behavior.base_behavior:FakeForwardBehavior',
+           'fake_hover = behavior.fake_hover:main',
+            'fake_forward = behavior.fake_forward:main',
+            'status_viewer = behavior.status_viewer:main',
+            'joy_teleop = behavior.joy_teleop:main',
         ]
     },
 )
