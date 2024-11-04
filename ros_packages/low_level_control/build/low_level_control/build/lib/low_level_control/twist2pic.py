@@ -11,7 +11,7 @@ from geometry_msgs.msg import Twist
 from multiprocessing import Lock
 from cv_bridge import CvBridge
 
-print("wesh")
+
 class Twist2Pic(Node):
     def __init__(self):
         super().__init__("twist2pic")
@@ -24,6 +24,7 @@ class Twist2Pic(Node):
         self.changed = True
         self.target_velocity = Twist()
         self.bridge = CvBridge()
+        print('yo')
 
         self.sub_tgt_vel = self.create_subscription(
             Twist, "/target_vel", self.on_target_velocity, qos_profile=1
