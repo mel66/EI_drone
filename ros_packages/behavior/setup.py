@@ -25,6 +25,7 @@ setup(
             'fake_forward = behavior.fake_forward:main',
             'status_viewer = behavior.status_viewer:main',
             'joy_teleop = behavior.joy_teleop:main',
+            'command = behavior.command:main',
         ]
     },
 )
