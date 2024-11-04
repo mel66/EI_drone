@@ -1,4 +1,6 @@
-from setuptools import find_packages, setup
+import os
+from glob import glob
+from setuptools import setup, find_packages
 
 package_name = 'visual_processing'
 
@@ -10,6 +12,8 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
+        # Inclure tous les fichiers de lancement.
+        (os.path.join('share', package_name, 'launch'), glob('launch/*.xml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -20,6 +24,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
+            "vp_node = visual_processing.vp_node:main",
+            'republish = visual_processing.republish:main',
         ],
     },
 )
