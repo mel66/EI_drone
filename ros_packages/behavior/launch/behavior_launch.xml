@@ -3,5 +3,6 @@
     <node pkg="behavior" exec="fake_forward" name="fake_forward"/>
     <node pkg="behavior" exec="status_viewer" name="status_viewer"/>
     <node pkg="behavior" exec="joy_teleop" name="joy_teleop"/>
+    <node pkg="joy" exec="joy_node" name="joy_node"/>
 
 </launch>
