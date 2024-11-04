@@ -33,9 +33,7 @@ class BaseBehavior(Node):
             self.send_status()
 
     def on_status(self):
-        # Override this method in subclasses to define behavior-specific actions
-        self.get_logger().info(f"{self.name} status set to {'active' if self.active else 'inactive'}")
-
+        pass
     def send_status(self):
         status_msg = BehaviorStatus()
         status_msg.name = self.name
