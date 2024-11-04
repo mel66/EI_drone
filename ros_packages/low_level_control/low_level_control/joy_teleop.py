@@ -67,7 +67,7 @@ class JoyTeleop(Node):
         self.declare_parameter("angular_factor", 0.2)
 
         self.sub_joy = self.create_subscription(Joy, "joy", self.on_joy, 1)
-        self.cmd_pub = self.create_publisher(Twist, "cmd_vel", 1)
+        self.cmd_pub = self.create_publisher(Twist, "/target_vel", 1)
 
         self.axis_tolerance = 0.1
        
