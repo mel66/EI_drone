@@ -1,0 +1,29 @@
+import rclpy
+from rclpy.node import Node
+
+class BaseBehavior(Node):
+    def __init__(self, name: str):
+        super().__init__(name)
+        self.name = name
+        self.active = False
+
+        # Crée un abonné au sujet 'behavior'
+        self.subscription = self.create_subscription(
+            BehaviorStatus,
+            'behavior',
+            self.status_callback,
+            10
+        )
+        self.get_logger().info(f'{self.name} initialisé et en attente d\'activation.')
+
+    def status_callback(self, msg: BehaviorStatus):
+        # Vérifie si le message est destiné à ce comportement
+        if msg.name == self.name:
+            # Met à jour l'état d'activation
+            self.active = msg.status
+            # Appelle on_status, qui peut être redéfini dans les sous-classes
+            self.on_status()
+        
+    def on_status(self):
+        # Notification de base ; les sous-classes doivent redéfinir cette méthode
+        self.get_logger().info(f'{self.name} a changé d\'état pour {"actif" if self.active else "inactif"}')
