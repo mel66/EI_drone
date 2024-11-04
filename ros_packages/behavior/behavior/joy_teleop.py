@@ -25,15 +25,21 @@ AXIS_RT                =  5 # Right progressive button
 AXIS_CROSS_HORIZONTAL  =  6 # Cross
 AXIS_CROSS_VERTICAL    =  7 # Cross
 
+
 class JoyTeleop(Node):
     def __init__(self):
         super().__init__('joy_teleop')
-        self.joy_subscriber = self.create_subscription(Joy, '/joy', self.joy_callback, 10)
-        self.command_publisher = self.create_publisher(Command, 'command', 10)
 
-        self.deadman_button = 5  # Replace with your joystick's deadman button index
+        # Parameters for the joystick mappings
+        self.deadman_button = BUTTON_RB  # Button index for the deadman button (example index)
         self.start_command = 'take_off'
         self.stop_command = 'stop_and_land'
+        
+        # Create publisher to the command topic
+        self.command_publisher = self.create_publisher(Command, 'command', 10)
+
+        # Subscribe to the /joy topic
+        self.joy_subscription = self.create_subscription(Joy, '/joy', self.joy_callback, 10)
 
         self.deadman_pressed = False
 
@@ -42,34 +48,51 @@ class JoyTeleop(Node):
         if msg.buttons[self.deadman_button] == 1:  # Button is pressed
             if not self.deadman_pressed:
                 self.deadman_pressed = True
-                self.publish_command(self.start_command)
+                self.send_command(self.start_command)
+
+            # Process other commands only if the deadman is pressed
             self.process_commands(msg)
         else:  # Deadman button is released
             if self.deadman_pressed:
                 self.deadman_pressed = False
-                self.publish_command(self.stop_command)
+                self.send_command(self.stop_command)
 
-    def publish_command(self, command_str):
+    def send_command(self, command_str):
+        # Publish a command to the command topic
         command_msg = Command()
         command_msg.command = command_str
         self.command_publisher.publish(command_msg)
         self.get_logger().info(f"Published command: {command_str}")
 
     def process_commands(self, msg):
-        # Example of processing other joystick buttons
-        if msg.buttons[0] == 1:  # Button index for a command
-            self.publish_command('fake_command_1')
-        if msg.buttons[1] == 1:  # Another command
-            self.publish_command('fake_command_2')
-        # Add more commands as needed
+        # Example command mappings to buttons for fake commands
+        fake_command_mappings = {
+            BUTTON_A: 'fake_command_1',  # Button 0
+            BUTTON_B: 'fake_command_2',  # Button 1
+            BUTTON_X: 'fake_command_3'   # Button 2
+        }
+
+        # Check each button for fake commands
+        for button_index, command in fake_command_mappings.items():
+            if msg.buttons[button_index] == 1:  # Button is pressed
+                self.send_command(command)
+
+        # Handle joystick axis with a deadzone
+        deadzone = 0.1
+        if abs(msg.axes[1]) > deadzone:  # Y-axis (e.g., forward/backward)
+            if msg.axes[1] > 0:
+                self.send_command('move_forward')
+            elif msg.axes[1] < 0:
+                self.send_command('move_backward')
 
 def main(args=None):
     rclpy.init(args=args)
-    joy_teleop = JoyTeleop()
-    rclpy.spin(joy_teleop)
-    joy_teleop.destroy_node()
+    node = JoyTeleop()
+    rclpy.spin(node)
+    node.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
+
 
