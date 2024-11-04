@@ -42,24 +42,4 @@ class BaseBehavior(Node):
         status_msg.status = self.active
         self.status_publisher.publish(status_msg)
 
-class FakeHoverBehavior(BaseBehavior):
-    def __init__(self):
-        super().__init__('FakeHover')
-        rclpy.spin(self)  # Ajout pour maintenir le nœud en fonctionnement
 
-    def on_status(self):
-        if self.active:
-            self.get_logger().info("FakeHover is now active: Hovering...")
-        else:
-            self.get_logger().info("FakeHover is now inactive: Stopped hovering.")
-
-class FakeForwardBehavior(BaseBehavior):
-    def __init__(self):
-        super().__init__('FakeForward')
-        rclpy.spin(self)  # Ajout pour maintenir le nœud en fonctionnement
-
-    def on_status(self):
-        if self.active:
-            self.get_logger().info("FakeForward is now active: Moving forward...")
-        else:
-            self.get_logger().info("FakeForward is now inactive: Stopped moving forward.")
