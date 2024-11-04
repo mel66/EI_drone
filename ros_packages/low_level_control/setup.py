@@ -23,7 +23,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            "twist2pic = low_level_control.twist2pic:main"
+            "twist2pic = low_level_control.twist2pic:main",
+            "joy_teleop = low_level.control.joy_teleop:main",
         ],
     },
 )
