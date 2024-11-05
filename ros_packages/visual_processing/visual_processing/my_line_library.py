@@ -167,6 +167,54 @@ def angle_indicator(line1, line2): #Ratio between left and right angles
    return 0
 
 
+def draw_function(
+    img,
+    Y,                   # The values, len(Y) = img.shape[1]
+    hmin, hmax,           # The curve is plotted between image lines hmin and hmax.
+    ymin, ymax,          # The value range [ymin, ymax] is mapped into [hmin, hmax].
+    color, thickness) : 
+    pass
 
 
+def local_shift(intensity_1, intensity_2, max_shift=10, window_radius=5):
+    """
+    Calculate the local shift between two intensity profiles using a vectorized approach.
+
+    Parameters:
+    - intensity_1 (np.ndarray): Intensity profile from the first frame (1D array).
+    - intensity_2 (np.ndarray): Intensity profile from the second frame (1D array).
+    - max_shift (int): Maximum shift to search for.
+    - window_radius (int): Radius of the window for local similarity.
+
+    Returns:
+    - shifts (np.ndarray): Array of local shifts for each point in intensity_1.
+    """
+    cut_intensity_1 = intensity_1[max_shift + window_radius : - (max_shift + window_radius)]
+
+    x_indices = np.arange(len(cut_intensity_1))
+    s_values = np.arange(max_shift + 1)
+    h_values = np.arange(-window_radius, window_radius + 1)
+
+    # Générer les indices des fenêtres pour les deux images
+    intensity_1_window = cut_intensity_1[x_indices[:, None] + h_values]  # (positions x, fenêtre)
+    intensity_2_window = intensity_2[x_indices[:, None, None] + h_values + s_values[:, None, None]]  # (décalages s, positions x, fenêtre)
+
+    # Calculer les différences au carré entre les deux fenêtres
+    diff_squared = (intensity_1_window - intensity_2_window) ** 2
+
+    # Calculer la somme des différences au carré pour chaque (s, x)
+    costs = diff_squared.sum(axis=-1)  # Somme sur la dimension fenêtre
+
+    # Trouver le décalage `s` qui minimise le coût pour chaque position `x`
+    optimal_shifts = costs.argmin(axis=0)
+
+    return optimal_shifts
+
+# Example usage
+# Assume `intensity_profile_1` and `intensity_profile_2` are the intensity profiles from two successive frames
+# intensity_profile_1 = ...
+# intensity_profile_2 = ...
+
+# Call the function to calculate local shifts
+# shifts = calculate_local_shift(intensity_profile_1, intensity_profile_2, max_shift=10, window_radius=5) 
 

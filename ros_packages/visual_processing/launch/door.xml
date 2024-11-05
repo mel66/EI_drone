@@ -1,0 +1,17 @@
+<launch>
+  <arg name="video_device" default="/dev/video0"/>
+  
+  <!-- USB cam driver -->
+  <node pkg="usb_cam" exec="usb_cam_node_exe" name="webcam" namespace="webcam">
+    <param name="video_device" value="$(var video_device)"/>
+  </node>
+  
+  <!-- Apply the vanishing point detection -->
+  <node pkg="visual_processing" exec="door" name="door">
+    <!-- Remap the input topic -->
+    <remap from="video_in" to="/bebop/image_raw/compressed"/>
+  </node>
+  
+  <!-- Viewer for the images -->
+  <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/webcam/image_raw"/>
+</launch>

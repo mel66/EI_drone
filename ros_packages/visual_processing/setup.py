@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             "vp_node = visual_processing.vp_node:main",
             'republish = visual_processing.republish:main',
+            "door = visual_processing.door:main",
         ],
     },
 )
