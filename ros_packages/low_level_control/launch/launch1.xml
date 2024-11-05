@@ -4,6 +4,7 @@
 <node pkg="low_level_control" exec="joy_teleop" name="joy_teleop">
 </node>
 <node pkg="low_level_control" exec="speed_controller" name="speed_controller" output="screen">
+    <remap from="/bepop/odom" to="/odom"/>
 </node>
 
 </launch>

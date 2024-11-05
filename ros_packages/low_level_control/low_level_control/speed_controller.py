@@ -102,7 +102,6 @@ class Speed_Controller(Node):
     
     def on_odom(self, msg):
         self.odom = msg.twist.twist
-        self.get_logger().info(f"Received odometry message: {msg.data}")
         self.get_logger().info(f"translated odom: {self.odom}")
 
     def hover_callback(self, msg):
