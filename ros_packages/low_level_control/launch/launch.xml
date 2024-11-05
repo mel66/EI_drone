@@ -4,7 +4,7 @@
 
 </node>
 <node pkg="joy" exec="joy_node" name="joy"/>
-<node pkg="low_level_control" exec="joy_teleop" name="joy_teleop">
-    <remap from="/bepop/cmd_vel" to="/target_vel"/>
+<node pkg="low_level_control" exec="joy_teleop" name="joy_teleop_cmdvel">
+    <remap from="target_vel" to="/bebop/cmd_vel"/>
 </node>
 </launch>
