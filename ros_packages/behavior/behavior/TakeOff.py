@@ -6,7 +6,7 @@ from .auto_off import AutoOffBehavior
 class TakeOffBehavior(AutoOffBehavior):
     def __init__(self):
         super().__init__('TakeOff', off_duration=2.0)
-        self.takeoff_publisher = self.create_publisher(Empty, 'take_off', 10)
+        self.takeoff_publisher = self.create_publisher(Empty, '/bebop/takeoff', 10)
 
     def on_status(self):
         if self.active:
