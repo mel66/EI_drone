@@ -26,6 +26,9 @@ setup(
             'status_viewer = behavior.status_viewer:main',
             'joy_teleop = behavior.joy_teleop:main',
             'command = behavior.command:main',
+            'TakeOff = behavior.TakeOff:main',
+            'Land = behavior.Land:main',
+
         ]
     },
 )

@@ -10,8 +10,20 @@ class TakeOffBehavior(AutoOffBehavior):
 
     def on_status(self):
         if self.active:
+            self.off_timer.reset()
             self.get_logger().info("TakeOff is active: Initiating takeoff.")
             self.takeoff_publisher.publish(Empty())
-            self.request_off()
+        
         else:
             self.get_logger().info("TakeOff is now inactive.")
+
+def main(args=None):
+    
+    rclpy.init(args=args)
+    TakeOff = TakeOffBehavior()
+    rclpy.spin(TakeOff)
+    TakeOff.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()

@@ -13,7 +13,8 @@ commands = {
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
-from behavior_interface.msg import Command  # Assuming Command.msg is defined
+from behavior_interface.msg import Command,BehaviorStatus  # Assuming Command.msg is defined
+
 
 import time
 import heapq  # To manage a sorted queue of events
@@ -32,7 +33,7 @@ class CommandNode(Node):
         self.command_subscription = self.create_subscription(Command, 'command', self.command_callback, 10)
         
         # Publisher to activate behaviors
-        self.behavior_publisher = self.create_publisher(String, 'behavior_activation', 10)
+        self.behavior_publisher = self.create_publisher(BehaviorStatus, 'behavior', 10)
         
         # Timer to periodically check and process the event queue
         self.timer = self.create_timer(0.05, self._on_time)
@@ -65,10 +66,46 @@ class CommandNode(Node):
                 self.active_behaviors.remove(behavior)
 
     def publish_behavior(self, behavior_name, activate=True):
-        # Publish to behavior_activation to activate/deactivate behaviors
-        command = String()
-        command.data = behavior_name if activate else f"stop_{behavior_name}"
-        self.behavior_publisher.publish(command)
+        behavior_msg = BehaviorStatus()
+        behavior_msg.name = behavior_name
+        behavior_msg.status = activate
+        self.behavior_publisher.publish(behavior_msg)
+        action = "Activating" if activate else "Deactivating"
+        self.get_logger().info(f"{action} behavior: {behavior_name}")
+
+    def _on_time(self):
+        # Check if there are events ready to be processed in the event queue
+        current_time = time.time()
+        while self.event_queue and self.event_queue[0][0] <= current_time:
+            _, behavior_name = heapq.heappop(self.event_queue)
+            self.publish_behavior(behavior_name)
+            self.active_behaviors.add(behavior_name)
+
+def main(args=None):
+    rclpy.init(args=args)
+    command_node = CommandNode()
+    rclpy.spin(command_node)
+    command_node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+
+
+
+    def deactivate_all_behaviors(self):
+        for behavior in self.behaviors:
+            if behavior in self.active_behaviors:
+                self.publish_behavior(behavior, activate=False)
+                self.active_behaviors.remove(behavior)
+
+    def publish_behavior(self, behavior_name, activate=True):
+        # Publish to behavior topic with BehaviorStatus message
+        behavior_msg = BehaviorStatus()
+        behavior_msg.name = behavior_name
+        behavior_msg.status = activate
+        self.behavior_publisher.publish(behavior_msg)
+        
         action = "Activating" if activate else "Deactivating"
         self.get_logger().info(f"{action} behavior: {behavior_name}")
 

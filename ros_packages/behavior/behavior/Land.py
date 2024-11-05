@@ -10,8 +10,20 @@ class LandBehavior(AutoOffBehavior):
 
     def on_status(self):
         if self.active:
+            self.off_timer.reset()
             self.get_logger().info("Land is active: Initiating landing.")
             self.land_publisher.publish(Empty())
-            self.request_off()
+          
         else:
             self.get_logger().info("Land is now inactive.")
+
+def main(args=None):
+    
+    rclpy.init(args=args)
+    Land = LandBehavior()
+    rclpy.spin(Land)
+    Land.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
