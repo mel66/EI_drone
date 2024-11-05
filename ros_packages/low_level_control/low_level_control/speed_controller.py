@@ -32,11 +32,13 @@ class Speed_Controller(Node):
         self.linear_y = 0.0
         self.linear_z = 0.0
         self.angular_z = 0.0
-
+        self.hover = True
+        self.create_timer(0.1, callback=self.transform)
         self.get_logger().info("Speed_Controller node has been started")
 
     def hover_callback(self, msg):
         # Callback for hover subscription
+        self.hover = msg.data
         self.get_logger().info(f"Received hover message: {msg.data}")
 
     def linear_x_callback(self, msg):
@@ -59,17 +61,17 @@ class Speed_Controller(Node):
         msg.data = False
         self.hover_pub.publish(msg)
 
-    def transform(self,msg):
-        self.linear_z = msg.data
-        self.get_logger().info("Publishing velocity command")
-        twist = Twist()
-        twist.linear.x = self.linear_x
-        print(self.linear_z)
-        twist.linear.y = self.linear_y
-        twist.linear.z = self.linear_z 
-        twist.angular.z = self.angular_z
-        self.get_logger().info(f"Received target vel message : {twist}")
-        self.target_vel.publish(twist)
+    def transform(self): 
+        if not(self.hover):
+            self.get_logger().info("Publishing velocity command")
+            twist = Twist()
+            twist.linear.x = self.linear_x
+            print(self.linear_z)
+            twist.linear.y = self.linear_y
+            twist.linear.z = self.linear_z 
+            twist.angular.z = self.angular_z
+            self.get_logger().info(f"Received target vel message : {twist}")
+            self.target_vel.publish(twist)
 
 def main(args=None):
     rclpy.init(args=args)
