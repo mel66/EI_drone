@@ -1,11 +1,13 @@
 # move_left.py
 import rclpy
 from .float_setter import FloatSetter
+from .command import SLOW_SPEED
+
 
 class MoveLeftBehavior(FloatSetter):
     def __init__(self):
-        # super().__init__('MoveLeft', 'linear_y', -0.2)
-        super().__init__('MoveLeft', '/bebop/cmd_vel', -0.2)
+        # super().__init__('MoveLeft', 'linear_y', -SLOW_SPEED)
+        super().__init__('MoveLeft', '/bebop/cmd_vel', -SLOW_SPEED)
 
 
 def main(args=None):

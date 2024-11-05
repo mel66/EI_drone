@@ -1,11 +1,13 @@
 # move_forward.py
 import rclpy
 from .float_setter import FloatSetter
+from .command import SLOW_SPEED
+
 
 class TurnRightBehavior(FloatSetter):
     def __init__(self):
-        #super().__init__('TurnRight', 'angular_z', 0.2)
-        super().__init__('TurnRight', '/bebop/cmd_vel', 0.2)
+        #super().__init__('TurnRight', 'angular_z', SLOW_SPEED)
+        super().__init__('TurnRight', '/bebop/cmd_vel', SLOW_SPEED)
 
 
 def main(args=None):

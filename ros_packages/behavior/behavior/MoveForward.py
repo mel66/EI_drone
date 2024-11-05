@@ -1,11 +1,13 @@
 # move_forward.py
 import rclpy
 from .float_setter import FloatSetter
+from .command import SLOW_SPEED
+
 
 class MoveForwardBehavior(FloatSetter):
     def __init__(self):
-        #super().__init__('MoveForward', 'linear_x', 0.2)
-        super().__init__('MoveForward', '/bebop/cmd_vel', 0.2)
+        #super().__init__('MoveForward', 'linear_x', SLOW_SPEED)
+        super().__init__('MoveForward', '/bebop/cmd_vel', SLOW_SPEED)
 
 
 def main(args=None):
