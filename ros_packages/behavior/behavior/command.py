@@ -7,18 +7,18 @@ commands = {
     'EmergencyStop': [(0, 'Hover'), (1.0, 'Land')],
     
     # Movement commands
-    'Forward': [(0, 'MoveForward')],
-    'Backward': [(0, 'MoveBackward')],
-    'Left': [(0, 'MoveLeft')],
-    'Right': [(0, 'MoveRight')],
+    'MoveForward': [(0, 'MoveForward')],
+    'MoveBackward': [(0, 'MoveBackward')],
+    'MoveLeft': [(0, 'MoveLeft')],
+    'MoveRight': [(0, 'MoveRight')],
     
     # Rotation commands
     'TurnLeft': [(0, 'TurnLeft')],
     'TurnRight': [(0, 'TurnRight')],
     
     # Vertical movement commands
-    'Up': [(0, 'MoveUp')],
-    'Down': [(0, 'MoveDown')]
+    'MoveUp': [(0, 'MoveUp')],
+    'MoveDown': [(0, 'MoveDown')]
 }
 
 

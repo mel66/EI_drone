@@ -72,8 +72,8 @@ class JoyTeleop(Node):
         # Define mappings for additional joystick commands
         command_mappings = {
             BUTTON_B: 'Hover',
-            BUTTON_A: 'move_right',
-            BUTTON_X: 'move_left',
+            BUTTON_A: 'MoveForward',
+            BUTTON_X: 'MoveLeft',
             BUTTON_Y: 'move_up'
         }
 

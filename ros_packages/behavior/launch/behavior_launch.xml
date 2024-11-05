@@ -7,6 +7,8 @@
     <node pkg="behavior" exec="TakeOff" name="TakeOff"/>
     <node pkg="behavior" exec="Land" name="Land"/>
     <node pkg="behavior" exec="Hover" name="Hover"/>
+    <node pkg="behavior" exec="MoveLeft" name="MoveLeft"/>
+    <node pkg="behavior" exec="MoveForward" name="MoveForward"/>
 
 
 </launch>
