@@ -31,6 +31,12 @@ setup(
             'Hover = behavior.Hover:main',
             'MoveLeft = behavior.MoveLeft:main',
             'MoveForward = behavior.MoveForward:main',
+            'MoveBackward = behavior.MoveBackward:main',
+            'MoveRight = behavior.MoveRight:main',
+            'TurnLeft = behavior.TurnLeft:main',
+            'TurnRight = behavior.TurnRight:main',
+            'MoveUp = behavior.MoveUp:main',
+            'MoveDown = behavior.MoveDown:main',
 
         ]
     },

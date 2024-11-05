@@ -72,9 +72,8 @@ class JoyTeleop(Node):
         # Define mappings for additional joystick commands
         command_mappings = {
             BUTTON_B: 'Hover',
-            BUTTON_A: 'MoveForward',
-            BUTTON_X: 'MoveLeft',
-            BUTTON_Y: 'move_up'
+            BUTTON_Y: 'MoveUp',
+            BUTTON_A: 'MoveDown',
         }
 
         # Trigger commands based on button presses
@@ -82,22 +81,30 @@ class JoyTeleop(Node):
             if msg.buttons[button_index] == 1:  # Button is pressed
                 self.send_command(command)
 
-        # Handle joystick axes with a deadzone
-        deadzone = 0.1
+        # Deadzone for minimal joystick movement
+        deadzone = 0.75
 
-        # Forward/backward movement (Y-axis)
+        # Forward/backward movement (Y-axis) - Left joystick
         if abs(msg.axes[AXIS_LEFT_VERTICAL]) > deadzone:
             if msg.axes[AXIS_LEFT_VERTICAL] > 0:
-                self.send_command('move_forward')
+                self.send_command('MoveForward')
             elif msg.axes[AXIS_LEFT_VERTICAL] < 0:
-                self.send_command('move_backward')
+                self.send_command('MoveBackward')
 
-        # Left/right movement (X-axis)
+        # Left/right movement (X-axis) - Left joystick
         if abs(msg.axes[AXIS_LEFT_HORIZONTAL]) > deadzone:
             if msg.axes[AXIS_LEFT_HORIZONTAL] > 0:
-                self.send_command('turn_right')
+                self.send_command('MoveRight')
             elif msg.axes[AXIS_LEFT_HORIZONTAL] < 0:
-                self.send_command('turn_left')
+                self.send_command('MoveLeft')
+
+        # Turning (X-axis) - Right joystick
+        if abs(msg.axes[AXIS_RIGHT_HORIZONTAL]) > deadzone:
+            if msg.axes[AXIS_RIGHT_HORIZONTAL] > 0:
+                self.send_command('TurnRight')
+            elif msg.axes[AXIS_RIGHT_HORIZONTAL] < 0:
+                self.send_command('TurnLeft')
+
 
 def main(args=None):
     rclpy.init(args=args)

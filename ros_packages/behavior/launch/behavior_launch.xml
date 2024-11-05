@@ -9,6 +9,12 @@
     <node pkg="behavior" exec="Hover" name="Hover"/>
     <node pkg="behavior" exec="MoveLeft" name="MoveLeft"/>
     <node pkg="behavior" exec="MoveForward" name="MoveForward"/>
+    <node pkg="behavior" exec="MoveBackward" name="MoveBackward"/>
+    <node pkg="behavior" exec="MoveRight" name="MoveRight"/>
+    <node pkg="behavior" exec="TurnLeft" name="TurnLeft"/>
+    <node pkg="behavior" exec="TurnRight" name="TurnRight"/>
+    <node pkg="behavior" exec="MoveUp" name="MoveUp"/>
+    <node pkg="behavior" exec="MoveDown" name="MoveDown"/>
 
 
 </launch>

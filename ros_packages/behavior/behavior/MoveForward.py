@@ -4,8 +4,8 @@ from .float_setter import FloatSetter
 
 class MoveForwardBehavior(FloatSetter):
     def __init__(self):
-        #super().__init__('MoveForward', 'linear_x', 1.0)
-        super().__init__('MoveForward', '/bebop/cmd_vel', 1.0)
+        #super().__init__('MoveForward', 'linear_x', 0.2)
+        super().__init__('MoveForward', '/bebop/cmd_vel', 0.2)
 
 
 def main(args=None):
