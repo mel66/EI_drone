@@ -6,6 +6,7 @@
     <node pkg="behavior" exec="command" name="command"/>
     <node pkg="behavior" exec="TakeOff" name="TakeOff"/>
     <node pkg="behavior" exec="Land" name="Land"/>
+    <node pkg="behavior" exec="Hover" name="Hover"/>
 
 
 </launch>

@@ -28,6 +28,9 @@ setup(
             'command = behavior.command:main',
             'TakeOff = behavior.TakeOff:main',
             'Land = behavior.Land:main',
+            'Hover = behavior.Hover:main',
+            'MoveLeft = behavior.MoveLeft:main',
+            'MoveForward = behavior.MoveForward:main',
 
         ]
     },

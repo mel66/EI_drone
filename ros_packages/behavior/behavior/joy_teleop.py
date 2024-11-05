@@ -36,7 +36,7 @@ class JoyTeleop(Node):
         # Parameters for the joystick mappings
         self.deadman_button = BUTTON_RB  # Button index for the deadman button
         self.start_command = 'TakeOff'
-        self.stop_command = 'Land'
+        self.stop_command = 'EmergencyStop'
         
         # Create publisher to the command topic
         self.command_publisher = self.create_publisher(Command, 'command', 10)
@@ -71,8 +71,8 @@ class JoyTeleop(Node):
     def process_commands(self, msg):
         # Define mappings for additional joystick commands
         command_mappings = {
-            BUTTON_A: 'Hover',
-            BUTTON_B: 'move_right',
+            BUTTON_B: 'Hover',
+            BUTTON_A: 'move_right',
             BUTTON_X: 'move_left',
             BUTTON_Y: 'move_up'
         }

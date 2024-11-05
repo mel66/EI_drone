@@ -11,8 +11,9 @@ class FloatSetter(AutoOffBehavior):
 
     def on_status(self):
         if self.active:
+            self.off_timer.reset()
+
             self.get_logger().info(f"{self.name} active: Setting {self.value} on {self.publisher.topic_name}.")
             self.publisher.publish(Float32(data=self.value))
-            self.request_off()
         else:
             self.get_logger().info(f"{self.name} inactive.")

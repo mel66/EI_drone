@@ -1,12 +1,24 @@
 # command.py
-behaviors = ['TakeOff', 'Land', 'Hover', 'MoveForward', 'MoveLeft']
+behaviors = ['TakeOff', 'Land', 'Hover', 'MoveForward','MoveBackward','MoveRight', 'MoveLeft','TurnLeft', 'TurnRight','MoveUp','MoveDown']
 commands = {
     'TakeOff': [(0, 'TakeOff')],
     'Land': [(0, 'Land')],
     'Hover': [(0, 'Hover')],
     'EmergencyStop': [(0, 'Hover'), (1.0, 'Land')],
+    
+    # Movement commands
     'Forward': [(0, 'MoveForward')],
+    'Backward': [(0, 'MoveBackward')],
     'Left': [(0, 'MoveLeft')],
+    'Right': [(0, 'MoveRight')],
+    
+    # Rotation commands
+    'TurnLeft': [(0, 'TurnLeft')],
+    'TurnRight': [(0, 'TurnRight')],
+    
+    # Vertical movement commands
+    'Up': [(0, 'MoveUp')],
+    'Down': [(0, 'MoveDown')]
 }
 
 
