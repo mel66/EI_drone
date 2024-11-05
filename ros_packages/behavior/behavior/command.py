@@ -92,42 +92,7 @@ class CommandNode(Node):
             _, behavior_name = heapq.heappop(self.event_queue)
             self.publish_behavior(behavior_name)
             self.active_behaviors.add(behavior_name)
-
-def main(args=None):
-    rclpy.init(args=args)
-    command_node = CommandNode()
-    rclpy.spin(command_node)
-    command_node.destroy_node()
-    rclpy.shutdown()
-
-if __name__ == '__main__':
-    main()
-
-
-
-    def deactivate_all_behaviors(self):
-        for behavior in self.behaviors:
-            if behavior in self.active_behaviors:
-                self.publish_behavior(behavior, activate=False)
-                self.active_behaviors.remove(behavior)
-
-    def publish_behavior(self, behavior_name, activate=True):
-        # Publish to behavior topic with BehaviorStatus message
-        behavior_msg = BehaviorStatus()
-        behavior_msg.name = behavior_name
-        behavior_msg.status = activate
-        self.behavior_publisher.publish(behavior_msg)
-        
-        action = "Activating" if activate else "Deactivating"
-        self.get_logger().info(f"{action} behavior: {behavior_name}")
-
-    def _on_time(self):
-        # Check if there are events ready to be processed in the event queue
-        current_time = time.time()
-        while self.event_queue and self.event_queue[0][0] <= current_time:
-            _, behavior_name = heapq.heappop(self.event_queue)
-            self.publish_behavior(behavior_name)
-            self.active_behaviors.add(behavior_name)
+            self.get_logger().info(f"les behivor active {self.active_behaviors}")
 
 def main(args=None):
     rclpy.init(args=args)

@@ -1,6 +1,8 @@
 import rclpy
 from rclpy.node import Node
-from sensor_msgs.msg import Joy
+from sensor_msgs.msg import Joy 
+from std_msgs.msg import Empty
+
 from behavior_interface.msg import Command
 
 # Button and axis mappings
@@ -40,12 +42,22 @@ class JoyTeleop(Node):
         
         # Create publisher to the command topic
         self.command_publisher = self.create_publisher(Command, 'command', 10)
+        self.hover_pub = self.create_publisher(Empty, '/bebop/hover', 10)
 
+        self.deadzone = 0.75
+        # Track the previous state of each axis to detect direction changes
+        self.axis_states = {
+            'MoveForwardBackward': 0,
+            'MoveLeftRight': 0,
+            'TurnLeftRight': 0,
+            'MoveUpDown': 0
+        }
         # Subscribe to the /joy topic
         self.joy_subscription = self.create_subscription(Joy, '/joy', self.joy_callback, 10)
 
         # Track state of the deadman button
         self.deadman_pressed = False
+        self.last_button_states = {}  # Track the previous state of each button
 
     def joy_callback(self, msg):
         # Check if the deadman button is pressed
@@ -68,6 +80,12 @@ class JoyTeleop(Node):
         self.command_publisher.publish(command_msg)
         self.get_logger().info(f"Published command: {command_str}")
 
+    def hover_command(self):
+        # Publish an empty message to stop the current behavior
+        self.hover_pub.publish(Empty())
+        self.get_logger().info("Published hover command")
+    
+
     def process_commands(self, msg):
         # Define mappings for additional joystick commands
         command_mappings = {
@@ -76,39 +94,71 @@ class JoyTeleop(Node):
             BUTTON_A: 'MoveDown',
         }
 
-        # Trigger commands based on button presses
         for button_index, command in command_mappings.items():
-            if msg.buttons[button_index] == 1:  # Button is pressed
-                self.send_command(command)
+            current_state = msg.buttons[button_index]
+
+            # Check if the button state has changed (pressed or released)
+            if button_index not in self.last_button_states or self.last_button_states[button_index] != current_state:
+                # Update the last known state
+                self.last_button_states[button_index] = current_state
+
+                # If the button is pressed, send the command
+                if current_state == 1:
+                    self.send_command(command)
+                # If the button is released, stop the command (if needed)
+                elif current_state == 0:
+                    self.hover_command()
+
+
 
         # Deadzone for minimal joystick movement
-        deadzone = 0.75
-
-        # Forward/backward movement (Y-axis) - Left joystick
-        if abs(msg.axes[AXIS_LEFT_VERTICAL]) > deadzone:
-            if msg.axes[AXIS_LEFT_VERTICAL] > 0:
+       
+        if abs(msg.axes[AXIS_LEFT_VERTICAL]) > self.deadzone:
+            if msg.axes[AXIS_LEFT_VERTICAL] > 0 and self.axis_states['MoveForwardBackward'] <= 0:
                 self.send_command('MoveForward')
-            elif msg.axes[AXIS_LEFT_VERTICAL] < 0:
+                self.axis_states['MoveForwardBackward'] = 1
+            elif msg.axes[AXIS_LEFT_VERTICAL] < 0 and self.axis_states['MoveForwardBackward'] >= 0:
                 self.send_command('MoveBackward')
-
+                self.axis_states['MoveForwardBackward'] = -1
+        elif self.axis_states['MoveForwardBackward'] != 0:
+            self.hover_command()
+            self.axis_states['MoveForwardBackward'] = 0
+        
+       
         # Left/right movement (X-axis) - Left joystick
-        if abs(msg.axes[AXIS_LEFT_HORIZONTAL]) > deadzone:
-            if msg.axes[AXIS_LEFT_HORIZONTAL] > 0:
+
+        if abs(msg.axes[AXIS_LEFT_HORIZONTAL]) > self.deadzone:
+            if msg.axes[AXIS_LEFT_HORIZONTAL] > 0 and self.axis_states['MoveLeftRight'] <= 0:
                 self.send_command('MoveRight')
-            elif msg.axes[AXIS_LEFT_HORIZONTAL] < 0:
+                self.axis_states['MoveLeftRight'] = 1
+            elif msg.axes[AXIS_LEFT_HORIZONTAL] < 0 and self.axis_states['MoveLeftRight'] >= 0:
                 self.send_command('MoveLeft')
+                self.axis_states['MoveLeftRight'] = -1
+        elif self.axis_states['MoveLeftRight'] != 0:
+            self.hover_command()
+            self.axis_states['MoveLeftRight'] = 0
 
         # Turning (X-axis) - Right joystick
-        if abs(msg.axes[AXIS_RIGHT_HORIZONTAL]) > deadzone:
-            if msg.axes[AXIS_RIGHT_HORIZONTAL] > 0:
+     
+        if abs(msg.axes[AXIS_RIGHT_HORIZONTAL]) > self.deadzone:
+            if msg.axes[AXIS_RIGHT_HORIZONTAL] > 0 and self.axis_states['TurnLeftRight'] <= 0:
                 self.send_command('TurnRight')
-            elif msg.axes[AXIS_RIGHT_HORIZONTAL] < 0:
+                self.axis_states['TurnLeftRight'] = 1
+            elif msg.axes[AXIS_RIGHT_HORIZONTAL] < 0 and self.axis_states['TurnLeftRight'] >= 0:
                 self.send_command('TurnLeft')
+                self.axis_states['TurnLeftRight'] = -1
+        elif self.axis_states['TurnLeftRight'] != 0:
+            self.hover_command()
+            self.axis_states['TurnLeftRight'] = 0
 
 
+    
+       
 def main(args=None):
     rclpy.init(args=args)
     joy_teleop = JoyTeleop()
     rclpy.spin(joy_teleop)
     joy_teleop.destroy_node()
     rclpy.shutdown()
+
+
