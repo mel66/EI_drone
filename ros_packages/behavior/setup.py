@@ -37,6 +37,9 @@ setup(
             'TurnRight = behavior.Command_float_setter:TurnRightmain',
             'MoveUp = behavior.Command_float_setter:MoveUpmain',
             'MoveDown = behavior.Command_float_setter:MoveDownmain',
+            'AlignCorridor = behavior.Semi_aut:AlignCorridormain',
+            'CenterCorridor = behavior.Semi_aut:CenterCorridormain',
+
 
         ]
     },

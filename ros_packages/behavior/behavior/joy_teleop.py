@@ -92,6 +92,7 @@ class JoyTeleop(Node):
             BUTTON_B: 'Hover',
             BUTTON_Y: 'MoveUp',
             BUTTON_A: 'MoveDown',
+            BUTTON_X:"GoAhead"
         }
 
         for button_index, command in command_mappings.items():

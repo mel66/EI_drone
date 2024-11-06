@@ -1,5 +1,9 @@
 # command.py
-behaviors = ['TakeOff', 'Land', 'Hover', 'MoveForward','MoveBackward','MoveRight', 'MoveLeft','TurnLeft', 'TurnRight','MoveUp','MoveDown']
+behaviors = [
+    'TakeOff', 'Land', 'Hover', 'MoveForward', 'MoveBackward', 'MoveRight', 'MoveLeft',
+    'TurnLeft', 'TurnRight', 'MoveUp', 'MoveDown', 'MoveForwardVp', 'AlignCorridor', 'CenterCorridor'
+]
+
 commands = {
     'TakeOff': [(0, 'TakeOff')],
     'Land': [(0, 'Land')],
@@ -7,19 +11,28 @@ commands = {
     'EmergencyStop': [(0, 'Hover'), (1.0, 'Land')],
     
     # Movement commands
-    'MoveForward': [(0, 'MoveForward')],
-    'MoveBackward': [(0, 'MoveBackward')],
-    'MoveLeft': [(0, 'MoveLeft')],
-    'MoveRight': [(0, 'MoveRight')],
+    'MoveForward': [(0, 'Hover'), (0, 'MoveForward')],
+    'MoveBackward': [(0, 'Hover'), (0, 'MoveBackward')],
+    'MoveLeft': [(0, 'Hover'), (0, 'MoveLeft')],
+    'MoveRight': [(0, 'Hover'), (0, 'MoveRight')],
     
     # Rotation commands
-    'TurnLeft': [(0, 'TurnLeft')],
-    'TurnRight': [(0, 'TurnRight')],
+    'TurnLeft': [(0, 'Hover'), (0, 'TurnLeft')],
+    'TurnRight': [(0, 'Hover'), (0, 'TurnRight')],
     
     # Vertical movement commands
-    'MoveUp': [(0, 'MoveUp')],
-    'MoveDown': [(0, 'MoveDown')]
+    'MoveUp': [(0, 'Hover'), (0, 'MoveUp')],
+    'MoveDown': [(0, 'Hover'), (0, 'MoveDown')],
+
+    # New GoAhead command, which relies on vanishing point detection
+    'GoAhead': [
+        (0, 'Hover'),
+        (0, 'AlignCorridor'),    # Align with the corridor based on vanishing point
+        (0, 'CenterCorridor')    # Center within the corridor
+    ]
 }
+
+
 SLOW_SPEED = 0.6
 
 import rclpy

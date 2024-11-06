@@ -1,7 +1,10 @@
 <launch>
     <node pkg="joy" exec="joy_node" name="joy_node"/>
-    <node pkg="low_level_control" exec="twist2pic" name="twist2pic"/>
-    <node pkg="low_level_control" exec="speed_controller" name="twist2pic"/>
+    <node pkg="low_level_control" exec="twist2pic" name="twist2pic">
+        <remap from="target_vel" to="/bebop/cmd_vel"/>
+    </node>
+
+    <node pkg="low_level_control" exec="speed_controller" name="speed_controller"/>
     <!--  Apply the vanishing point detection  -->
     <node pkg="visual_processing" exec="vp_node" name="vp_node" output="screen">
     <!--  <remap from="camera" to="/webcam/image_raw/compressed"/>  -->
@@ -9,6 +12,8 @@
     </node>
     <!--  Viewer for the images  -->
     <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/webcam/image_raw"/>
+
+
     <node pkg ="rqt_gui" exec="rqt_gui"/>
 
     <node pkg="behavior" exec="status_viewer" name="status_viewer"/>
@@ -26,6 +31,8 @@
     <node pkg="behavior" exec="MoveUp" name="MoveUp"/>
     <node pkg="behavior" exec="MoveDown" name="MoveDown"/>
 
+    <node pkg="behavior" exec="CenterCorridor" name="CenterCorridor"/>
+    <node pkg="behavior" exec="AlignCorridor" name="AlignCorridor"/>
 
 
 
