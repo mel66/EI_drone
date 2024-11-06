@@ -6,10 +6,10 @@
     <param name="video_device" value="$(var video_device)"/>
   </node>
   
-  <!-- Apply the vanishing point detection -->
   <node pkg="visual_processing" exec="door" name="door">
     <!-- Remap the input topic -->
     <remap from="video_in" to="/bebop/image_raw/compressed"/>
+    <remap from="/speed" to="/bebop/odom"/>
   </node>
   
   <!-- Viewer for the images -->

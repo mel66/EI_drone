@@ -24,7 +24,7 @@ class VPNode(Node):
         self.lsd = cv2.createLineSegmentDetector(0)
         # Publisher d'image de debug
         self.debug_pub = self.create_publisher(
-            CompressedImage, "/debug/vpimg/image_raw/compressed", 1
+            CompressedImage, "video_out", 1
         )
 
         # Subscriber pour les images compressées

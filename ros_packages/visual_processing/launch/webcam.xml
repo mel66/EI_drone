@@ -7,13 +7,12 @@
 <!--  Republishing the raw to compressed image  -->
 <node pkg="visual_processing" exec="republish" name="republisher">
 <remap from="in" to="/webcam/image_raw"/>
-<!--  <remap from="out" to="/webcam/image_raw/compressed"/>  -->
 <remap from="out" to="/toto/image_raw/compressed"/>
 </node>
 <!--  Apply the vanishing point detection  -->
 <node pkg="visual_processing" exec="vp_node" name="vp_node" output="screen">
-<!--  <remap from="camera" to="/webcam/image_raw/compressed"/>  -->
 <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
+<remap from="video_out" to="/bebop/camera/vp"/>
 </node>
 <!--  Viewer for the images  -->
 <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/webcam/image_raw"/>
