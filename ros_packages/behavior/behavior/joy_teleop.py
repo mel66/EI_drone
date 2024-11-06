@@ -129,10 +129,10 @@ class JoyTeleop(Node):
 
         if abs(msg.axes[AXIS_LEFT_HORIZONTAL]) > self.deadzone:
             if msg.axes[AXIS_LEFT_HORIZONTAL] > 0 and self.axis_states['MoveLeftRight'] <= 0:
-                self.send_command('MoveLeft')
+                self.send_command('MoveRight')
                 self.axis_states['MoveLeftRight'] = 1
             elif msg.axes[AXIS_LEFT_HORIZONTAL] < 0 and self.axis_states['MoveLeftRight'] >= 0:
-                self.send_command('MoveRight')
+                self.send_command('MoveLeft')
                 self.axis_states['MoveLeftRight'] = -1
         elif self.axis_states['MoveLeftRight'] != 0:
             self.axis_states['MoveLeftRight'] = 0

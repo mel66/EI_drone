@@ -20,7 +20,7 @@ commands = {
     'MoveUp': [(0, 'MoveUp')],
     'MoveDown': [(0, 'MoveDown')]
 }
-SLOW_SPEED = 0.2
+SLOW_SPEED = 0.6
 
 import rclpy
 from rclpy.node import Node

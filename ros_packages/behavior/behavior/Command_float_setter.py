@@ -38,8 +38,8 @@ def MoveForwardmain(args=None):
 
 class MoveDownBehavior(FloatSetter):
     def __init__(self):
-        #super().__init__('MoveDown', 'linear_z', -SLOW_SPEED)
-        super().__init__('MoveDown', '/bebop/cmd_vel', -SLOW_SPEED)
+        super().__init__('MoveDown', 'linear_z', -SLOW_SPEED/2)
+        # super().__init__('MoveDown', '/bebop/cmd_vel', -SLOW_SPEED)
 
 
 def MoveDownmain(args=None):
@@ -53,7 +53,7 @@ def MoveDownmain(args=None):
 
 class MoveUpBehavior(FloatSetter):
     def __init__(self):
-        super().__init__('MoveUp', 'linear_z', SLOW_SPEED)
+        super().__init__('MoveUp', 'linear_z', SLOW_SPEED/2)
         # super().__init__('MoveUp', '/bebop/cmd_vel', SLOW_SPEED)
 
 
@@ -100,7 +100,7 @@ def MoveRightmain(args=None):
 
 class TurnRightBehavior(FloatSetter):
     def __init__(self):
-        super().__init__('TurnRight', 'angular_z', SLOW_SPEED)
+        super().__init__('TurnRight', 'angular_z', SLOW_SPEED/2)
         # super().__init__('TurnRight', '/bebop/cmd_vel', SLOW_SPEED)
 
 
@@ -117,7 +117,7 @@ def TurnRightmain(args=None):
 
 class TurnLeftBehavior(FloatSetter):
     def __init__(self):
-        super().__init__('TurnLeft', 'angular_z', SLOW_SPEED)
+        super().__init__('TurnLeft', 'angular_z', -SLOW_SPEED/2)
         # super().__init__('TurnLeft', '/bebop/cmd_vel', SLOW_SPEED)
 
 

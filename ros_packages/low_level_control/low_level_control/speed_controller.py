@@ -49,7 +49,7 @@ class PID:
                       }
 
     def update(self,
-               time: datetime.datetime,
+               time: float,
                error: float):
         '''
         Update the error, its derivative and integral
@@ -62,7 +62,7 @@ class PID:
 
         self.errors['error'] = error
         self.errors['time'] = time
-        dt = (time - prev_time).total_seconds()
+        dt = (time - prev_time)
         self.errors['i_error'] += dt * (prev_error + error)/2.0
         self.errors['d_error'] = (error - prev_error)/dt
 
@@ -79,16 +79,16 @@ class Speed_Controller(Node):
         super().__init__("speed_controller")
 
         # Subscribers
-        self.hover_sub = self.create_subscription(Bool, "hover", self.hover_callback, 1)
-        self.linear_x_sub = self.create_subscription(Float32, "linear_x", self.linear_x_callback, 1)
-        self.linear_y_sub = self.create_subscription(Float32, "linear_y", self.linear_y_callback, 1)
-        self.linear_z_sub = self.create_subscription(Float32, "linear_z", self.linear_z_callback, 1)
-        self.angular_z_sub = self.create_subscription(Float32, "angular_z", self.angular_z_callback, 1)
+        self.hover_sub = self.create_subscription(Bool, "hover", self.hover_callback, 10)
+        self.linear_x_sub = self.create_subscription(Float32, "linear_x", self.linear_x_callback, 10)
+        self.linear_y_sub = self.create_subscription(Float32, "linear_y", self.linear_y_callback, 10)
+        self.linear_z_sub = self.create_subscription(Float32, "linear_z", self.linear_z_callback, 10)
+        self.angular_z_sub = self.create_subscription(Float32, "angular_z", self.angular_z_callback, 10)
         self.sub_odom = self.create_subscription(Odometry, "/bebop/odom", self.on_odom, qos_profile=1)
 
         # Publishers
-        self.hover_pub = self.create_publisher(Bool, "hover", 1)
-        self.target_vel = self.create_publisher(Twist, "/bebop/cmd_vel", 1)
+
+        self.target_vel = self.create_publisher(Twist, "/bebop/cmd_vel", 10)
 
         # Store the received values for velocity
         self.linear_x = 0.0
@@ -96,23 +96,27 @@ class Speed_Controller(Node):
         self.linear_z = 0.0
         self.angular_z = 0.0
         self.hover = True
-        self.odom = 0
+        self.odom = None
         self.create_timer(0.1, callback=self.transform)
         self.get_logger().info("Speed_Controller node has been started")
 
         #PIDs
         #create PID for twistx and twisty
-        self.gains_x = {'Kp': 50, 'Kd': 10, 'Ki': 50.0}
-        self.gains_y = {'Kp': 50, 'Kd': 10, 'Ki': 50.0}
+        #Ku1 = 0.0
+        #Tu1 = 0.0
+        #Ku2 = 0.0
+        #Tu2 = 0.0
+        self.gains_x = {'Kp': 0.6, 'Kd': 0.18, 'Ki': 0.72}
+        self.gains_y = {'Kp': 0.7, 'Kd': 0.178, 'Ki': 0.7 }
         self.pid_x = PID(self.gains_x)
         self.pid_y = PID(self.gains_y)
         self.t0 = self.get_clock().now()
         self.t1 = self.get_clock().now()
-        self.t = self.t1 - self.t0
+        self.t = (self.t1 - self.t0).nanoseconds*1e-9 
     
     def on_odom(self, msg):
         self.odom = msg.twist.twist
-        self.get_logger().info(f"translated odom: {self.odom}")
+        # self.get_logger().info(f"translated odom: {self.odom}")
 
     def hover_callback(self, msg):
         # Callback for hover subscription
@@ -120,16 +124,20 @@ class Speed_Controller(Node):
         self.get_logger().info(f"Received hover message: {msg.data}")
 
     def linear_x_callback(self, msg):
+        self.hover = False
         self.linear_x = msg.data
 
     def linear_y_callback(self, msg):
+        self.hover = False
         self.linear_y = msg.data
 
     def linear_z_callback(self, msg):
+        self.hover = False
         self.linear_z = msg.data
         self.get_logger().info(f"Received hover message: {msg.data}")
 
     def angular_z_callback(self, msg):
+        self.hover = False
         self.angular_z = msg.data
         
         
@@ -140,7 +148,8 @@ class Speed_Controller(Node):
         self.hover_pub.publish(msg)
 
     def transform(self):
-        if not(self.hover):
+        if not(self.hover) and self.odom!=None:
+
             twist = Twist()
             twist.linear.x = self.linear_x
             twist.linear.y = self.linear_y
@@ -151,7 +160,7 @@ class Speed_Controller(Node):
 
             #using pid
             self.t1 = self.get_clock().now()
-            self.t = self.t1 - self.t0
+            self.t = (self.t1 - self.t0).nanoseconds*1e-9 
             self.pid_x.update(self.t, twist.linear.x - self.odom.linear.x)
             self.pid_y.update(self.t, twist.linear.y - self.odom.linear.y)
             Fx = self.pid_x.command
@@ -169,7 +178,9 @@ class Speed_Controller(Node):
             self.pid_y.reset()
             self.t0 = self.get_clock().now()
             self.t1 = self.get_clock().now()
-            self.t = self.t1 - self.t0
+            self.t = (self.t1 - self.t0).nanoseconds*1e-9 
+            twist = Twist()
+            self.target_vel.publish(twist)
 
 
 def main(args=None):

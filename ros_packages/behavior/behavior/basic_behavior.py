@@ -26,6 +26,7 @@ class BaseBehavior(Node):
     def status_callback(self, msg):
         # Activate or deactivate the behavior if the name matches
         if msg.name == self.name:
+
             self.active = msg.status
             self.on_status()
         elif msg.name == 'ping':
