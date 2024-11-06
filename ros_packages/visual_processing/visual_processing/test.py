@@ -37,8 +37,10 @@ padding = max_shift + window_radius
 shift_padded = np.pad(filtered_shift, (padding, padding), mode='constant', constant_values=0)
 
 c = optical.detect_door(line1, line2, shift_padded, padding)
-c_padded = np.pad(c, (padding, padding), mode='constant', constant_values=0)
 
+print(c.shape)
+print(shift_padded.shape)
+print(frame1.shape)
 # Créer une copie de l'image pour le dessin
 img_display = frame1.copy()
 

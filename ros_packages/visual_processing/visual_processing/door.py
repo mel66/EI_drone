@@ -55,7 +55,7 @@ class Door(Node):
         if self.previous_frame_line is not None:
             # Calculer le décalage entre les deux lignes
             shift = optical.local_shift(
-                self.previous_frame_line, current_frame_line, max_shift=max_shift, window_radius=radius
+                current_frame_line, self.previous_frame_line, max_shift=max_shift, window_radius=radius
             )
             
             # Appliquer un filtre médian pour lisser le signal du décalage
@@ -68,18 +68,18 @@ class Door(Node):
             padding = max_shift + radius
             shift_padded = np.pad(shift_smoothed, (padding, padding), mode='constant', constant_values=0)
 
-            # c = optical.detect_door(self.previous_frame_line, current_frame_line, shift_padded, padding)
-            # c_padded = np.pad(c, (padding, padding), mode='constant', constant_values=0)
+            c = optical.detect_door(self.previous_frame_line, current_frame_line, shift_padded, padding)
+
 
             # Visualiser les courbes sur l'image
             img_display = frame.copy()
             cv2.line(img_display, (0, middle_row), (img_display.shape[1], middle_row), (0, 0, 0), 1)
-            
+
             # Dessiner les courbes d'intensité et le décalage sur l'image
             optical.draw_function(img_display, self.previous_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 0, 255), thickness=1)
             optical.draw_function(img_display, current_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 255, 0), thickness=1)
             optical.draw_function(img_display, shift_padded, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
-            # optical.draw_function(img_display, c_padded, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
+            optical.draw_function(img_display, c, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
 
             # Rogner l'image pour retirer les bordures ajoutées par max_shift et radius
             img_display = img_display[:, max_shift + radius : - (max_shift + radius)]

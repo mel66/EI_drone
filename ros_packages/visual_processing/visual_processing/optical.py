@@ -24,9 +24,9 @@ def draw_function(
     
 
 
-def local_shift(intensity_1, intensity_2, max_shift=10, window_radius=5):
+def local_shift(after, before, max_shift=10, window_radius=5):
     # Extraire la partie centrale d'intensity_1 pour éviter les débordements
-    cut_intensity_1 = intensity_1[max_shift + window_radius : - (max_shift + window_radius)]
+    cut_intensity_1 = after[max_shift + window_radius : - (max_shift + window_radius)]
     
     # Définir les indices pour les positions x et les valeurs de décalage
     x_indices = np.arange(len(cut_intensity_1))
@@ -40,8 +40,8 @@ def local_shift(intensity_1, intensity_2, max_shift=10, window_radius=5):
 
     # Extraire les fenêtres d'intensité pour chaque position
     try:
-        intensity_1_window = intensity_1[pos1]  # (positions x, fenêtre)
-        intensity_2_window = intensity_2[pos2]  # (décalages s, positions x, fenêtre)
+        intensity_1_window = after[pos1]  # (positions x, fenêtre)
+        intensity_2_window = before[pos2]  # (décalages s, positions x, fenêtre)
     except IndexError as e:
         print(f"Erreur d'index : {e}")
         print(f"Dimensions de pos1 : {pos1.shape}, Dimensions de pos2 : {pos2.shape}")
@@ -59,7 +59,7 @@ def local_shift(intensity_1, intensity_2, max_shift=10, window_radius=5):
     return optimal_shifts
 
 
-def detect_door(signal1, signal2, shift, padding, std_threshold=0.5, window_size=11, similarity_threshold=100):
+def detect_door(signal1, signal2, shift, padding, std_threshold=2, window_size=17, similarity_threshold=100):
     """
     Détecte la présence de mur (0) ou de porte/profondeur (1) en analysant les signaux de décalage.
 
@@ -88,15 +88,13 @@ def detect_door(signal1, signal2, shift, padding, std_threshold=0.5, window_size
             pass
         else:
             # Définir la fenêtre centrée en `c`
-            window1 = signal1[c - half_window : c + half_window + 1]
             window2 = signal2[c - half_window : c + half_window + 1]
 
             # Calculer l'écart-type pour chaque fenêtre
-            std_signal1 = np.std(window1)
             std_signal2 = np.std(window2)
             
             # Vérifier si les écarts-types sont faibles (indiquant un mur uniforme)
-            if std_signal1 < std_threshold and std_signal2 < std_threshold:
+            if std_signal2 < std_threshold:
                 c_values[c] = 0  # Mur détecté
             else:
                 c_values[c] = 1  # Porte ou profondeur détectée

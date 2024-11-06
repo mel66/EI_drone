@@ -10,7 +10,7 @@ from example_interfaces.msg import Float32  # std_msgs.msg.Float32 is deprecated
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 
 
 # Local imports
@@ -35,6 +35,8 @@ class VPNode(Node):
 
         self.horizontal_offset_pub = self.create_publisher(Float32, 'vp_offset', 10)
         self.angle_ratio_pub = self.create_publisher(Float32, 'vp_angle', 10)
+        self.vp = self.vp(bool, 'vp_detected', 10)
+
 
         self.min_length = 80
         self.up = np.array([[0],[1]])
@@ -119,6 +121,9 @@ class VPNode(Node):
             vanish = [x,y]
             if 0 <= x <= frame.shape[1] and 0 <= y <= frame.shape[0]:
                 self.get_logger().info("Le point d'intersection est dans la frame")
+                vp_msg = Bool()
+                vp_msg.data = True
+                self.vp.publish(vp_msg)
                 if self.show_vanish :
                     cv2.circle(frame, vanish, 8, (255, 0, 0), 3) #vanishing point en bleu
                 horizontal_offset = mll.horizontal_misplacement(frame,vanish)
@@ -134,9 +139,15 @@ class VPNode(Node):
                 # print(f"Leften side of frame to vanishing pt : {mll.horizontal_misplacement(frame,vanish)}")
                 # print(f"Ratio angles : {mll.angle_indicator(left[4:6],right[4:6]) - 1}") 
             else:
+                vp_msg = Bool()
+                vp_msg.data = False
+                self.vp.publish(vp_msg)
                 self.get_logger().info("Le point d'intersection est hors de la frame")
         else :
             self.get_logger().info("Not enough vanishing lines")
+            vp_msg = Bool()
+            vp_msg.data = False
+            self.vp.publish(vp_msg)
         outmsg = self.bridge.cv2_to_compressed_imgmsg(frame.copy())
         self.debug_pub.publish(outmsg)
 
