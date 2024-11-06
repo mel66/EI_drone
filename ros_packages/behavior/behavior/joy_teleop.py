@@ -107,7 +107,7 @@ class JoyTeleop(Node):
                     self.send_command(command)
                 # If the button is released, stop the command (if needed)
                 elif current_state == 0:
-                    self.hover_command()
+                    pass
 
 
 
@@ -118,10 +118,10 @@ class JoyTeleop(Node):
                 self.send_command('MoveForward')
                 self.axis_states['MoveForwardBackward'] = 1
             elif msg.axes[AXIS_LEFT_VERTICAL] < 0 and self.axis_states['MoveForwardBackward'] >= 0:
+                self.get_logger().info(f"je suis la {self.axis_states['MoveForwardBackward']}")
                 self.send_command('MoveBackward')
                 self.axis_states['MoveForwardBackward'] = -1
         elif self.axis_states['MoveForwardBackward'] != 0:
-            self.hover_command()
             self.axis_states['MoveForwardBackward'] = 0
         
        
@@ -129,26 +129,24 @@ class JoyTeleop(Node):
 
         if abs(msg.axes[AXIS_LEFT_HORIZONTAL]) > self.deadzone:
             if msg.axes[AXIS_LEFT_HORIZONTAL] > 0 and self.axis_states['MoveLeftRight'] <= 0:
-                self.send_command('MoveRight')
+                self.send_command('MoveLeft')
                 self.axis_states['MoveLeftRight'] = 1
             elif msg.axes[AXIS_LEFT_HORIZONTAL] < 0 and self.axis_states['MoveLeftRight'] >= 0:
-                self.send_command('MoveLeft')
+                self.send_command('MoveRight')
                 self.axis_states['MoveLeftRight'] = -1
         elif self.axis_states['MoveLeftRight'] != 0:
-            self.hover_command()
             self.axis_states['MoveLeftRight'] = 0
 
         # Turning (X-axis) - Right joystick
      
         if abs(msg.axes[AXIS_RIGHT_HORIZONTAL]) > self.deadzone:
             if msg.axes[AXIS_RIGHT_HORIZONTAL] > 0 and self.axis_states['TurnLeftRight'] <= 0:
-                self.send_command('TurnRight')
+                self.send_command('TurnLeft')
                 self.axis_states['TurnLeftRight'] = 1
             elif msg.axes[AXIS_RIGHT_HORIZONTAL] < 0 and self.axis_states['TurnLeftRight'] >= 0:
-                self.send_command('TurnLeft')
+                self.send_command('TurnRight')
                 self.axis_states['TurnLeftRight'] = -1
         elif self.axis_states['TurnLeftRight'] != 0:
-            self.hover_command()
             self.axis_states['TurnLeftRight'] = 0
 
 
