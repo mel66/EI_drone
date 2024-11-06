@@ -23,3 +23,14 @@ def main(args=None):
     rclpy.spin(align_corridor)
     align_corridor.destroy_node()
     rclpy.shutdown()
+
+
+
+ <!--  Apply the vanishing point detection  -->
+    <node pkg="visual_processing" exec="vp_node" name="vp_node" output="screen">
+    <!--  <remap from="camera" to="/webcam/image_raw/compressed"/>  -->
+    <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
+    </node>
+    <!--  Viewer for the images  -->
+    <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/webcam/image_raw"/>
+    <node pkg ="rqt_gui" exec="rqt_gui"/>
