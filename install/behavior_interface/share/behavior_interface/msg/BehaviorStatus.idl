@@ -1,0 +1,14 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from behavior_interface/msg/BehaviorStatus.msg
+// generated code does not contain a copyright notice
+
+
+module behavior_interface {
+  module msg {
+    struct BehaviorStatus {
+      string name;
+
+      boolean status;
+    };
+  };
+};

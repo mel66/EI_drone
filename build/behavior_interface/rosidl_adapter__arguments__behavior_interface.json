@@ -1,0 +1,7 @@
+{
+  "package_name": "behavior_interface",
+  "non_idl_tuples": [
+    "/home/st5dronelab/Desktop/EI_drone/ros_packages/behavior_interface:msg/BehaviorStatus.msg",
+    "/home/st5dronelab/Desktop/EI_drone/ros_packages/behavior_interface:msg/Command.msg"
+  ]
+}

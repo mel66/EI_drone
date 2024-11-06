@@ -1,0 +1,18 @@
+[console_scripts]
+Hover = behavior.Hover:main
+Land = behavior.Land:main
+MoveBackward = behavior.Command_float_setter:MoveBackwardmain
+MoveDown = behavior.Command_float_setter:MoveDownmain
+MoveForward = behavior.Command_float_setter:MoveForwardmain
+MoveLeft = behavior.Command_float_setter:MoveLeftmain
+MoveRight = behavior.Command_float_setter:MoveRightmain
+MoveUp = behavior.Command_float_setter:MoveUpmain
+TakeOff = behavior.TakeOff:main
+TurnLeft = behavior.Command_float_setter:TurnLeftmain
+TurnRight = behavior.Command_float_setter:TurnRightmain
+command = behavior.command:main
+fake_forward = behavior.fake_forward:main
+fake_hover = behavior.fake_hover:main
+joy_teleop = behavior.joy_teleop:main
+status_viewer = behavior.status_viewer:main
+

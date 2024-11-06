@@ -1,0 +1,11 @@
+<launch>
+
+<node pkg="joy" exec="joy_node" name="joy"/>
+<node pkg="low_level_control" exec="joy_teleop" name="joy_teleop">
+    <remap from="/bepop/cmd_vel" to="/target_vel"/>
+</node>
+<node pkg="low_level_control" exec="speed_controller" name="speed_controller" output="screen">
+
+</node>
+
+</launch>
