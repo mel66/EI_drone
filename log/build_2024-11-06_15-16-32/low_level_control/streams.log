@@ -1,0 +1,47 @@
+[1.323s] Invoking command in '/home/st5dronelab/Desktop/EI_drone/ros_packages/low_level_control': PYTHONPATH=/home/st5dronelab/Desktop/EI_drone/build/low_level_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/low_level_control build --build-base /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build install --record /home/st5dronelab/Desktop/EI_drone/build/low_level_control/install.log --single-version-externally-managed install_data
+[1.693s] running egg_info
+[1.694s] creating ../../build/low_level_control/low_level_control.egg-info
+[1.694s] writing ../../build/low_level_control/low_level_control.egg-info/PKG-INFO
+[1.694s] writing dependency_links to ../../build/low_level_control/low_level_control.egg-info/dependency_links.txt
+[1.695s] writing entry points to ../../build/low_level_control/low_level_control.egg-info/entry_points.txt
+[1.695s] writing requirements to ../../build/low_level_control/low_level_control.egg-info/requires.txt
+[1.695s] writing top-level names to ../../build/low_level_control/low_level_control.egg-info/top_level.txt
+[1.695s] writing manifest file '../../build/low_level_control/low_level_control.egg-info/SOURCES.txt'
+[1.698s] reading manifest file '../../build/low_level_control/low_level_control.egg-info/SOURCES.txt'
+[1.699s] writing manifest file '../../build/low_level_control/low_level_control.egg-info/SOURCES.txt'
+[1.699s] running build
+[1.699s] running build_py
+[1.700s] creating /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build
+[1.700s] creating /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib
+[1.700s] creating /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control
+[1.700s] copying low_level_control/twist2pic.py -> /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control
+[1.700s] copying low_level_control/PID.py -> /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control
+[1.700s] copying low_level_control/speed_controller.py -> /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control
+[1.700s] copying low_level_control/__init__.py -> /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control
+[1.700s] running install
+[1.701s] running install_lib
+[1.702s] creating /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control
+[1.702s] copying /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control/twist2pic.py -> /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control
+[1.702s] copying /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control/PID.py -> /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control
+[1.702s] copying /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control/speed_controller.py -> /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control
+[1.703s] copying /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build/lib/low_level_control/__init__.py -> /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control
+[1.703s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control/twist2pic.py to twist2pic.cpython-310.pyc
+[1.706s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control/PID.py to PID.cpython-310.pyc
+[1.707s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control/speed_controller.py to speed_controller.cpython-310.pyc
+[1.708s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control/__init__.py to __init__.cpython-310.pyc
+[1.708s] running install_data
+[1.708s] creating /home/st5dronelab/Desktop/EI_drone/install/low_level_control/share/ament_index
+[1.709s] creating /home/st5dronelab/Desktop/EI_drone/install/low_level_control/share/ament_index/resource_index
+[1.709s] creating /home/st5dronelab/Desktop/EI_drone/install/low_level_control/share/ament_index/resource_index/packages
+[1.709s] copying resource/low_level_control -> /home/st5dronelab/Desktop/EI_drone/install/low_level_control/share/ament_index/resource_index/packages
+[1.709s] copying package.xml -> /home/st5dronelab/Desktop/EI_drone/install/low_level_control/share/low_level_control
+[1.709s] creating /home/st5dronelab/Desktop/EI_drone/install/low_level_control/share/low_level_control/launch
+[1.709s] copying launch/launch1.xml -> /home/st5dronelab/Desktop/EI_drone/install/low_level_control/share/low_level_control/launch/
+[1.709s] running install_egg_info
+[1.711s] Copying ../../build/low_level_control/low_level_control.egg-info to /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages/low_level_control-0.0.0-py3.10.egg-info
+[1.712s] running install_scripts
+[1.739s] Installing joy_teleop script to /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/low_level_control
+[1.739s] Installing speed_controller script to /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/low_level_control
+[1.739s] Installing twist2pic script to /home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/low_level_control
+[1.740s] writing list of installed files to '/home/st5dronelab/Desktop/EI_drone/build/low_level_control/install.log'
+[1.767s] Invoked command in '/home/st5dronelab/Desktop/EI_drone/ros_packages/low_level_control' returned '0': PYTHONPATH=/home/st5dronelab/Desktop/EI_drone/build/low_level_control/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/st5dronelab/Desktop/EI_drone/install/low_level_control/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/low_level_control build --build-base /home/st5dronelab/Desktop/EI_drone/build/low_level_control/build install --record /home/st5dronelab/Desktop/EI_drone/build/low_level_control/install.log --single-version-externally-managed install_data

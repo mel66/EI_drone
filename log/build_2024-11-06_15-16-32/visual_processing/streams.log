@@ -1,0 +1,46 @@
+[1.277s] Invoking command in '/home/st5dronelab/Desktop/EI_drone/ros_packages/visual_processing': PYTHONPATH=/home/st5dronelab/Desktop/EI_drone/build/visual_processing/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/visual_processing build --build-base /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build install --record /home/st5dronelab/Desktop/EI_drone/build/visual_processing/install.log --single-version-externally-managed install_data
+[1.560s] running egg_info
+[1.560s] creating ../../build/visual_processing/visual_processing.egg-info
+[1.561s] writing ../../build/visual_processing/visual_processing.egg-info/PKG-INFO
+[1.561s] writing dependency_links to ../../build/visual_processing/visual_processing.egg-info/dependency_links.txt
+[1.561s] writing entry points to ../../build/visual_processing/visual_processing.egg-info/entry_points.txt
+[1.561s] writing requirements to ../../build/visual_processing/visual_processing.egg-info/requires.txt
+[1.561s] writing top-level names to ../../build/visual_processing/visual_processing.egg-info/top_level.txt
+[1.562s] writing manifest file '../../build/visual_processing/visual_processing.egg-info/SOURCES.txt'
+[1.564s] reading manifest file '../../build/visual_processing/visual_processing.egg-info/SOURCES.txt'
+[1.565s] writing manifest file '../../build/visual_processing/visual_processing.egg-info/SOURCES.txt'
+[1.565s] running build
+[1.565s] running build_py
+[1.566s] creating /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build
+[1.566s] creating /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib
+[1.566s] creating /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing
+[1.566s] copying visual_processing/republish.py -> /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing
+[1.566s] copying visual_processing/my_line_library.py -> /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing
+[1.566s] copying visual_processing/vp_node.py -> /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing
+[1.566s] copying visual_processing/__init__.py -> /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing
+[1.566s] running install
+[1.567s] running install_lib
+[1.568s] creating /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing
+[1.568s] copying /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing/republish.py -> /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing
+[1.568s] copying /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing/my_line_library.py -> /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing
+[1.568s] copying /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing/vp_node.py -> /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing
+[1.568s] copying /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build/lib/visual_processing/__init__.py -> /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing
+[1.569s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing/republish.py to republish.cpython-310.pyc
+[1.569s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing/my_line_library.py to my_line_library.cpython-310.pyc
+[1.571s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing/vp_node.py to vp_node.cpython-310.pyc
+[1.572s] byte-compiling /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing/__init__.py to __init__.cpython-310.pyc
+[1.572s] running install_data
+[1.572s] creating /home/st5dronelab/Desktop/EI_drone/install/visual_processing/share/ament_index
+[1.572s] creating /home/st5dronelab/Desktop/EI_drone/install/visual_processing/share/ament_index/resource_index
+[1.573s] creating /home/st5dronelab/Desktop/EI_drone/install/visual_processing/share/ament_index/resource_index/packages
+[1.573s] copying resource/visual_processing -> /home/st5dronelab/Desktop/EI_drone/install/visual_processing/share/ament_index/resource_index/packages
+[1.573s] copying package.xml -> /home/st5dronelab/Desktop/EI_drone/install/visual_processing/share/visual_processing
+[1.573s] creating /home/st5dronelab/Desktop/EI_drone/install/visual_processing/share/visual_processing/launch
+[1.573s] copying launch/webcam.xml -> /home/st5dronelab/Desktop/EI_drone/install/visual_processing/share/visual_processing/launch
+[1.573s] running install_egg_info
+[1.576s] Copying ../../build/visual_processing/visual_processing.egg-info to /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages/visual_processing-0.0.0-py3.10.egg-info
+[1.577s] running install_scripts
+[1.603s] Installing republish script to /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/visual_processing
+[1.603s] Installing vp_node script to /home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/visual_processing
+[1.603s] writing list of installed files to '/home/st5dronelab/Desktop/EI_drone/build/visual_processing/install.log'
+[1.642s] Invoked command in '/home/st5dronelab/Desktop/EI_drone/ros_packages/visual_processing' returned '0': PYTHONPATH=/home/st5dronelab/Desktop/EI_drone/build/visual_processing/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/st5dronelab/Desktop/EI_drone/install/visual_processing/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/visual_processing build --build-base /home/st5dronelab/Desktop/EI_drone/build/visual_processing/build install --record /home/st5dronelab/Desktop/EI_drone/build/visual_processing/install.log --single-version-externally-managed install_data
