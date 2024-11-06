@@ -62,7 +62,7 @@ class PID:
         self.errors['i_error'] += dt * (prev_error + error)/2.0
         self.errors['d_error'] = (error - prev_error)/dt
 
-    @property
+    #@property
     def command(self):
         return self.gains['Kp'] * self.errors['error'] + \
                 self.gains['Kd'] * self.errors['d_error'] + \
@@ -142,6 +142,7 @@ if __name__ == '__main__':
 
         # Get the force to apply
         F = pid.command
+        print(F)
 
         # Integrate the dynamics with Euler
         dX = f_dX(F, X, ddtheta)

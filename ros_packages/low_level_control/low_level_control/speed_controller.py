@@ -84,11 +84,11 @@ class Speed_Controller(Node):
         self.linear_y_sub = self.create_subscription(Float32, "linear_y", self.linear_y_callback, 1)
         self.linear_z_sub = self.create_subscription(Float32, "linear_z", self.linear_z_callback, 1)
         self.angular_z_sub = self.create_subscription(Float32, "angular_z", self.angular_z_callback, 1)
-        self.sub_odom = self.create_subscription(Odometry, "/odom", self.on_odom, qos_profile=1)
+        self.sub_odom = self.create_subscription(Odometry, "/bebop/odom", self.on_odom, qos_profile=1)
 
         # Publishers
         self.hover_pub = self.create_publisher(Bool, "hover", 1)
-        self.target_vel = self.create_publisher(Twist, "target_vel", 1)
+        self.target_vel = self.create_publisher(Twist, "/bebop/cmd_vel", 1)
 
         # Store the received values for velocity
         self.linear_x = 0.0
@@ -99,6 +99,16 @@ class Speed_Controller(Node):
         self.odom = 0
         self.create_timer(0.1, callback=self.transform)
         self.get_logger().info("Speed_Controller node has been started")
+
+        #PIDs
+        #create PID for twistx and twisty
+        self.gains_x = {'Kp': 50, 'Kd': 10, 'Ki': 50.0}
+        self.gains_y = {'Kp': 50, 'Kd': 10, 'Ki': 50.0}
+        self.pid_x = PID(self.gains_x)
+        self.pid_y = PID(self.gains_y)
+        self.t0 = self.get_clock().now()
+        self.t1 = self.get_clock().now()
+        self.t = self.t1 - self.t0
     
     def on_odom(self, msg):
         self.odom = msg.twist.twist
@@ -129,24 +139,41 @@ class Speed_Controller(Node):
         msg.data = False
         self.hover_pub.publish(msg)
 
-    def transform(self): 
+    def transform(self):
         if not(self.hover):
-            self.get_logger().info("Publishing velocity command")
             twist = Twist()
             twist.linear.x = self.linear_x
-            print(self.linear_z)
             twist.linear.y = self.linear_y
             twist.linear.z = self.linear_z 
             twist.angular.z = self.angular_z
             self.get_logger().info(f"Received target vel message : {twist}")
+            
+
+            #using pid
+            self.t1 = self.get_clock().now()
+            self.t = self.t1 - self.t0
+            self.pid_x.update(self.t, twist.linear.x - self.odom.linear.x)
+            self.pid_y.update(self.t, twist.linear.y - self.odom.linear.y)
+            Fx = self.pid_x.command
+            Fy = self.pid_y.command
+            twist.linear.x += Fx
+            twist.linear.y += Fy
+
+            #publishing corrected command
+            self.get_logger().info(f"Publishing PIDcorrected velocity command {twist}")
             self.target_vel.publish(twist)
 
+
+        else:
+            self.pid_x.reset()
+            self.pid_y.reset()
+            self.t0 = self.get_clock().now()
+            self.t1 = self.get_clock().now()
+            self.t = self.t1 - self.t0
+
+
 def main(args=None):
-    #create PID for twistx and twisty
-    gains_x = {'Kp': 50, 'Kd': 10, 'Ki': 50.0}
-    gains_y = {'Kp': 50, 'Kd': 10, 'Ki': 50.0}
-    pid_x = PID(gains_x)
-    pid_y = PID(gains_y)
+
 
     rclpy.init(args=args)
 
