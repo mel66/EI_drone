@@ -103,17 +103,17 @@ class Speed_Controller(Node):
         #PIDs
         #create PID for twistx and twisty
         
-        Ku1 = 1.2
-        Tu1 = 0.0
+        Ku1 = 1
+        Tu1 = 4.0
 
-        Kp1 = 0.6*Ku1
-        Kd1 = 0#= 0.125*Kp1*Tu1
-        Ki1 = 0# 2*Kp1/Tu1
+        Kp1 = 0.9
+        Kd1 = 0#.125*Kp1*Tu1
+        Ki1 =  0#2*Kp1/Tu1
 
         Ku2 = 0.0
         Tu2 = 0.0
 
-        Kp2 = 0.6*Ku2
+        Kp2 = 0.9 #0.6*Ku2
         Kd2 = 0 #0.125*Kp2*Tu2
         Ki2 = 0 #2*Kp2/Tu2
         self.gains_x = {'Kp': Kp1, 'Kd': Kd1 , 'Ki': Ki1}

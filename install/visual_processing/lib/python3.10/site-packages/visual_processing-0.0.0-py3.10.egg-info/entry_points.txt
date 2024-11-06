@@ -1,4 +1,0 @@
-[console_scripts]
-republish = visual_processing.republish:main
-vp_node = visual_processing.vp_node:main
-
