@@ -32,8 +32,9 @@ class AlignCorridor(BaseBehavior):
 
     def update_alignment(self):
         # Vérifie si le point de fuite est détecté
-        if self.vp_detected:
-            angular_z_value = -SLOW_SPEED * math.copysign(self.x_offset)
+        if self.vp_detected and self.active:
+            angular_z_value = -SLOW_SPEED*self.x_offset
+
             self.publisher.publish(Float32(data=angular_z_value))
         else:
             # Si pas de point de fuite, ne publie rien (ou publiez un message avec `angular_z = 0` si besoin)
@@ -75,8 +76,8 @@ class CenterCorridor(BaseBehavior):
 
     def update_centering(self):
         # Vérifie si le point de fuite est détecté
-        if self.vp_detected:
-            linear_y_value = SLOW_SPEED* math.copysign(self.angle_ratio)
+        if self.vp_detected and self.active:
+            linear_y_value = SLOW_SPEED*self.angle_ratio
             self.publisher.publish(Float32(data=linear_y_value))
         else:
             # Si pas de point de fuite, ne publie rien (ou publiez un message avec `linear_y = 0` si besoin)

@@ -27,7 +27,8 @@ commands = {
     # New GoAhead command, which relies on vanishing point detection
     'GoAhead': [
         (0, 'Hover'),
-        (0, 'AlignCorridor'),    # Align with the corridor based on vanishing point
+        (0, 'AlignCorridor'),
+        (0, 'Hover'),    # Align with the corridor based on vanishing point
         (0, 'CenterCorridor')    # Center within the corridor
     ]
 }

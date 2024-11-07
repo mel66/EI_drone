@@ -131,7 +131,7 @@ class Speed_Controller(Node):
     def hover_callback(self, msg):
         # Callback for hover subscription
         self.hover = msg.data
-        self.get_logger().info(f"Received hover message: {msg.data}")
+        # self.get_logger().info(f"Received hover message: {msg.data}")
 
     def linear_x_callback(self, msg):
         self.hover = False
@@ -144,7 +144,7 @@ class Speed_Controller(Node):
     def linear_z_callback(self, msg):
         self.hover = False
         self.linear_z = msg.data
-        self.get_logger().info(f"Received hover message: {msg.data}")
+        # self.get_logger().info(f"Received hover message: {msg.data}")
 
     def angular_z_callback(self, msg):
         self.hover = False
@@ -152,7 +152,7 @@ class Speed_Controller(Node):
         
         
     def hover_publish(self):
-        self.get_logger().info("Publishing hover message: False")
+        # self.get_logger().info("Publishing hover message: False")
         msg = Bool()
         msg.data = False
         self.hover_pub.publish(msg)
@@ -165,7 +165,7 @@ class Speed_Controller(Node):
             twist.linear.y = self.linear_y
             twist.linear.z = self.linear_z 
             twist.angular.z = self.angular_z
-            self.get_logger().info(f"Received target vel message : {twist}")
+            # self.get_logger().info(f"Received target vel message : {twist}")
             
 
             #using pid
@@ -179,7 +179,7 @@ class Speed_Controller(Node):
             twist.linear.y += Fy
 
             #publishing corrected command
-            self.get_logger().info(f"Publishing PIDcorrected velocity command {twist}")
+            # self.get_logger().info(f"Publishing PIDcorrected velocity command {twist}")
             self.target_vel.publish(twist)
 
 

@@ -35,7 +35,7 @@ class VPNode(Node):
 
         self.horizontal_offset_pub = self.create_publisher(Float32, 'vp_offset', 10)
         self.angle_ratio_pub = self.create_publisher(Float32, 'vp_angle', 10)
-        self.vp_detected_pub = self.vp(Bool, 'vp_detected', 10)
+        self.vp_detected_pub = self.create_publisher(Bool, 'vp_detected', 10)
 
         self.min_length = 80
         self.up = np.array([[0],[1]])

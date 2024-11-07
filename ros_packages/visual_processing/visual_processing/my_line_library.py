@@ -158,7 +158,7 @@ def angle_indicator(line1, line2): #Ratio between left and right angles
 #    return agl1/agl2
    agl=agl1/(agl1+agl2) - 0.5
    
-   return agl2
+   return agl
 
 
 
