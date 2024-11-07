@@ -10,7 +10,7 @@ from std_msgs.msg import Float32
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 
 
 # Local imports
@@ -35,6 +35,7 @@ class VPNode(Node):
 
         self.horizontal_offset_pub = self.create_publisher(Float32, 'vp_offset', 10)
         self.angle_ratio_pub = self.create_publisher(Float32, 'vp_angle', 10)
+        self.vp_detected_pub = self.vp(Bool, 'vp_detected', 10)
 
         self.min_length = 80
         self.up = np.array([[0],[1]])
@@ -116,6 +117,9 @@ class VPNode(Node):
             y = int(intersections[0][1])
             vanish = [x,y]
             if 0 <= x <= frame.shape[1] and 0 <= y <= frame.shape[0]:
+                vp_detected_msg= Bool()
+                vp_detected_msg.data = True
+                self.vp_detected_pub.publish(vp_detected_msg)
                 if self.show_vanish :
                     cv2.circle(frame, vanish, 8, (255, 0, 0), 3) #vanishing point en bleu
                 horizontal_offset = mll.horizontal_misplacement(frame,vanish)
@@ -131,9 +135,13 @@ class VPNode(Node):
                 # print(f"Leften side of frame to vanishing pt : {mll.horizontal_misplacement(frame,vanish)}")
                 # print(f"Ratio angles : {mll.angle_indicator(left[4:6],right[4:6]) - 1}") 
             else:
-                pass
+                vp_detected_msg= Bool()
+                vp_detected_msg.data = False
+                self.vp_detected_pub.publish(vp_detected_msg)
         else :
-            pass
+            vp_detected_msg= Bool()
+            vp_detected_msg.data = False
+            self.vp_detected_pub.publish(vp_detected_msg)
 
         outmsg = self.bridge.cv2_to_compressed_imgmsg(frame.copy())
         self.debug_pub.publish(outmsg)
