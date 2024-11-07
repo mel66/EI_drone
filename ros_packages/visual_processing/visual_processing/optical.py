@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from scipy.ndimage import median_filter
+from scipy.ndimage import median_filter, binary_closing, label
 
 
 def draw_function(
@@ -24,9 +24,9 @@ def draw_function(
     
 
 
-def local_shift(after, before, max_shift=10, window_radius=5):
+def local_shift(i1, i2, max_shift, window_radius):
     # Extraire la partie centrale d'intensity_1 pour éviter les débordements
-    cut_intensity_1 = after[max_shift + window_radius : - (max_shift + window_radius)]
+    cut_intensity_1 = i1[max_shift + window_radius : - (max_shift + window_radius)]
     
     # Définir les indices pour les positions x et les valeurs de décalage
     x_indices = np.arange(len(cut_intensity_1))
@@ -37,16 +37,11 @@ def local_shift(after, before, max_shift=10, window_radius=5):
     pos = h_values + max_shift + window_radius
     pos1 = x_indices[:, None] + pos
     pos2 = x_indices[:, None, None] + s_values[None, :, None] + pos  # Création des fenêtres pour décalage
-
     # Extraire les fenêtres d'intensité pour chaque position
-    try:
-        intensity_1_window = after[pos1]  # (positions x, fenêtre)
-        intensity_2_window = before[pos2]  # (décalages s, positions x, fenêtre)
-    except IndexError as e:
-        print(f"Erreur d'index : {e}")
-        print(f"Dimensions de pos1 : {pos1.shape}, Dimensions de pos2 : {pos2.shape}")
-        return None  # ou gérer l'erreur différemment
-
+    intensity_1_window = i1[pos1]  # (positions x, fenêtre)
+    intensity_2_window = i2[pos2]  # (x, s, fenêtre)
+    
+    
     # Calculer les différences au carré entre les deux fenêtres
     diff_squared = (intensity_1_window[:, None, :] - intensity_2_window) ** 2
 
@@ -56,49 +51,66 @@ def local_shift(after, before, max_shift=10, window_radius=5):
     # Trouver le décalage `s` qui minimise le coût pour chaque position `x`
     optimal_shifts = costs.argmin(axis=1)
 
+    padding = max_shift + window_radius
+    optimal_shifts = np.pad(optimal_shifts, (padding, padding), mode='constant', constant_values=0)
     return optimal_shifts
 
 
-def detect_door(signal1, signal2, shift, padding, std_threshold=2, window_size=17, similarity_threshold=100):
+def detect_door( signal2, shift, padding, window_size=7):
     """
     Détecte la présence de mur (0) ou de porte/profondeur (1) en analysant les signaux de décalage.
+    Conserve uniquement le plus gros palier détecté pour chaque type (0 ou 1) sans boucle for.
 
     Parameters:
     - signal1 (np.ndarray): Première ligne d'intensité extraite de l'image précédente.
     - signal2 (np.ndarray): Deuxième ligne d'intensité extraite de l'image actuelle.
     - shift (np.ndarray): Tableau des décalages lissés entre signal1 et signal2.
     - window_size (int): Taille de la fenêtre glissante utilisée pour analyser les variations de `shift`.
-    - similarity_threshold (float): Seuil pour déterminer si une section est un mur uniforme.
+    - threshold (float): Seuil pour déterminer si une section est un mur uniforme.
 
     Returns:
     - c_values (np.ndarray): Tableau indiquant 0 (mur) ou 1 (porte/profondeur) pour chaque point.
     """
 
-    # Assurer que la taille de la fenêtre est impaire pour centrer la fenêtre
     assert window_size % 2 == 1, "window_size doit être impair pour centrer la fenêtre"
     half_window = window_size // 2
 
     # Initialiser le tableau des résultats
     c_values = np.zeros_like(shift)
     max_shift = max(shift)
-    # Parcourir chaque point `c` avec une fenêtre glissante centrée
-    for c in range(padding, len(shift) - padding):
-        if shift[c] >= max_shift//2:
-            c_values[c] = 0
-            pass
-        else:
-            # Définir la fenêtre centrée en `c`
-            window2 = signal2[c - half_window : c + half_window + 1]
 
-            # Calculer l'écart-type pour chaque fenêtre
-            std_signal2 = np.std(window2)
-            
-            # Vérifier si les écarts-types sont faibles (indiquant un mur uniforme)
-            if std_signal2 < std_threshold:
-                c_values[c] = 0  # Mur détecté
-            else:
-                c_values[c] = 1  # Porte ou profondeur détectée
+    #Pour chacun de ces points avec faible shift, construire une fenetre autour
+    #Prendre np.std de ces fenetres
+    #Mettre à 1 si std > threshold
 
-    c_values = median_filter(c_values, size=40)  # Ajustez la taille de la fenêtre selon vos besoins
+    # Définir les indices des valeurs centrales (en excluant les valeurs de bord)
+    central_indices = np.arange(padding, len(shift) - padding)
+    # Création d'un masque pour les zones centrales où le shift est bas
+    low_shift_mask = (shift[central_indices] <= max_shift // 3)
+    low_shift_indices = central_indices[low_shift_mask]
 
-    return c_values
+    # Création de toutes les fenêtres pour les indices centraux de faible shift
+    windows = np.lib.stride_tricks.sliding_window_view(signal2, window_size)[low_shift_indices - half_window]
+
+    # Calculer l'écart-type sur chaque fenêtre de manière vectorisée
+    std_values = np.std(windows, axis=1)
+    if len(std_values) > 0:
+        similarity_threshold = np.percentile(std_values,60)
+    else:
+        similarity_threshold = 0 
+     # Mettre à 1 les indices centraux où l'écart-type est supérieur au seuil
+    c_values[low_shift_indices] = (std_values > similarity_threshold).astype(int)
+    c_values = median_filter(c_values, size=30)
+
+    # Appliquer une dilatation binaire pour fusionner les segments proches
+    #structure = np.ones(60)
+    #c_values = binary_closing(c_values, structure=structure).astype(int)
+    # Identifier les segments de `1` et calculer leur largeur
+    width_threshold = (len(signal2) * 0.1)
+    labeled_array, num_features = label(c_values == 1)
+    for i in range(1, num_features + 1):
+        segment_width = np.sum(labeled_array == i)
+        # Garder uniquement les pics avec une largeur supérieure au seuil
+        if segment_width <= width_threshold:
+            c_values[labeled_array == i] = 0    
+    return (c_values)

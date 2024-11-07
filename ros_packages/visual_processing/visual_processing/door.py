@@ -29,6 +29,7 @@ class Door(Node):
         
         self.bridge = CvBridge()
         self.previous_frame_line = None  # Stocke la ligne de l'image précédente
+        self.previous_frame = None
 
         # Subscriber for drone speed
         self.speed_sub = self.create_subscription(
@@ -48,7 +49,7 @@ class Door(Node):
         middle_row = gray.shape[0] // 2
         current_frame_line = gray[middle_row, :]
 
-        max_shift = 25
+        max_shift = 40
         radius = 40
 
         # Comparer avec la ligne de l'image précédente si elle existe
@@ -58,27 +59,19 @@ class Door(Node):
                 current_frame_line, self.previous_frame_line, max_shift=max_shift, window_radius=radius
             )
             
-            # Appliquer un filtre médian pour lisser le signal du décalage
-            shift_smoothed = median_filter(shift, size=40)
-
-    
-
-
             # Ajouter un padding pour aligner le shift avec les positions de l'image
             padding = max_shift + radius
-            shift_padded = np.pad(shift_smoothed, (padding, padding), mode='constant', constant_values=0)
-
-            c = optical.detect_door(self.previous_frame_line, current_frame_line, shift_padded, padding)
+            c = optical.detect_door(current_frame_line, shift, padding)#La fonction distingue les mur de couleur uniforme des portes avec profondeur
 
 
             # Visualiser les courbes sur l'image
-            img_display = frame.copy()
+            img_display = self.previous_frame.copy()
             cv2.line(img_display, (0, middle_row), (img_display.shape[1], middle_row), (0, 0, 0), 1)
 
             # Dessiner les courbes d'intensité et le décalage sur l'image
             optical.draw_function(img_display, self.previous_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 0, 255), thickness=1)
             optical.draw_function(img_display, current_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 255, 0), thickness=1)
-            optical.draw_function(img_display, shift_padded, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
+            optical.draw_function(img_display, shift, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
             optical.draw_function(img_display, c, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
 
             # Rogner l'image pour retirer les bordures ajoutées par max_shift et radius
@@ -90,6 +83,7 @@ class Door(Node):
 
         # Mettre à jour la ligne précédente pour la prochaine comparaison
         self.previous_frame_line = current_frame_line
+        self.previous_frame = frame
         self.get_logger().info("New frame")
 
 

@@ -23,24 +23,18 @@ line2 = gray2[middle_row, :]  # On suppose que les images sont de même taille
 
 
 # Définir les paramètres pour la fonction de décalage
-max_shift = 25  # Décalage maximum à tester
-window_radius = 40  # Rayon de la fenêtre locale
+max_shift = 30  # Décalage maximum à tester
+window_radius = 25  # Rayon de la fenêtre locale
 
 # Calculer le décalage entre les deux lignes
 shift = optical.local_shift(line1, line2, max_shift=max_shift, window_radius=window_radius)
 
 # Appliquer un filtre médian au décalage pour réduire le bruit
 filtered_shift = median_filter(shift, size=40)  # Ajustez la taille de la fenêtre selon vos besoins
-
-# Ajouter un padding pour aligner le décalage avec les positions de la ligne sur l'image
 padding = max_shift + window_radius
-shift_padded = np.pad(filtered_shift, (padding, padding), mode='constant', constant_values=0)
+c = optical.detect_door(line2, shift, padding)
 
-c = optical.detect_door(line1, line2, shift_padded, padding)
 
-print(c.shape)
-print(shift_padded.shape)
-print(frame1.shape)
 # Créer une copie de l'image pour le dessin
 img_display = frame1.copy()
 
@@ -50,7 +44,7 @@ cv2.line(img_display, (0, middle_row), (img_display.shape[1], middle_row), (0, 0
 # Dessiner les courbes d'intensité et le décalage lissé sur l'image
 optical.draw_function(img_display, line1, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 0, 255), thickness=1)
 optical.draw_function(img_display, line2, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 255, 0), thickness=1)
-optical.draw_function(img_display, shift_padded, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
+optical.draw_function(img_display, shift, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
 optical.draw_function(img_display, c, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
 
 
