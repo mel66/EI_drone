@@ -4,12 +4,13 @@
         <remap from="target_vel" to="/bebop/cmd_vel"/>
     </node>
 
-    <node pkg="low_level_control" exec="speed_controller" name="speed_controller"/>
-    <!--  Apply the vanishing point detection  -->
+    <node pkg="low_level_control" exec="speed_controller" name="speed_controller">
+        <remap from="target_vel" to="/bebop/cmd_vel"/>
+    </node>
+        <!--  Apply the vanishing point detection  -->
     <node pkg="visual_processing" exec="vp_node" name="vp_node" output="screen">
-    <!--  <remap from="camera" to="/webcam/image_raw/compressed"/>  -->
-        <remap from="/bebop/camera/image_raw/compressed" to="video_in"/>
-        <remap from="/bebop/vp/compressed" to="video_out"/>
+    <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
+    <remap from="video_out" to="/bebop/vp/compressed"/>
     </node>
     <!--  Viewer for the images  -->
     <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/webcam/image_raw"/>

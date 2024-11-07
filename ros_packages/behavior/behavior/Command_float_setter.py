@@ -68,7 +68,7 @@ def MoveUpmain(args=None):
 
 class MoveLeftBehavior(FloatSetter):
     def __init__(self):
-        super().__init__('MoveLeft', 'linear_y', -SLOW_SPEED)
+        super().__init__('MoveLeft', 'linear_y', -SLOW_SPEED/2)
         # super().__init__('MoveLeft', '/bebop/cmd_vel', -SLOW_SPEED)
 
 
@@ -84,7 +84,7 @@ def MoveLeftmain(args=None):
 
 class MoveRightBehavior(FloatSetter):
     def __init__(self):
-        super().__init__('MoveRight', 'linear_y', SLOW_SPEED)
+        super().__init__('MoveRight', 'linear_y', SLOW_SPEED/2)
         # super().__init__('MoveRight', '/bebop/cmd_vel', SLOW_SPEED)
 
 

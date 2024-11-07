@@ -34,8 +34,7 @@ commands = {
     # New UTurn and TurnBack commands
     'UTurn': [
         (0, 'Hover'),
-        (0.5, 'TurnLeft'),
-        (3, 'Hover')
+        (0, 'UTurn'),
     ],
     'TurnBack': [
         (0, 'UTurn'),
