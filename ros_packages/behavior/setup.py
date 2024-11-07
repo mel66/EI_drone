@@ -39,6 +39,7 @@ setup(
             'MoveDown = behavior.Command_float_setter:MoveDownmain',
             'AlignCorridor = behavior.Semi_aut:AlignCorridormain',
             'CenterCorridor = behavior.Semi_aut:CenterCorridormain',
+            'MoveForwardVp = behavior.Semi_aut:MoveForwardVpmain',
 
 
         ]

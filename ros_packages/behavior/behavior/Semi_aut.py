@@ -90,3 +90,42 @@ def CenterCorridormain(args=None):
     rclpy.spin(center_corridor)
     center_corridor.destroy_node()
     rclpy.shutdown()
+
+
+
+
+class MoveForwardVp(BaseBehavior):
+    def __init__(self):
+        super().__init__('MoveForwardVp')
+        
+        # Subscribe to the vanishing point detection topic
+        self.vp_detected_sub = self.create_subscription(Bool, 'vp_detected', self.vp_detected_callback, 10)
+        
+        # Publisher for `linear_x` to control forward speed
+        self.publisher = self.create_publisher(Float32, 'linear_x', 10)
+        
+        # Variable to store detection status of vanishing point
+        self.vp_detected = False
+
+    def vp_detected_callback(self, msg):
+        # Update the detection status of the vanishing point
+        self.vp_detected = msg.data
+        self.update_forward_motion()
+
+    def update_forward_motion(self):
+        # Check if the vanishing point is detected
+        if self.vp_detected and self.active:
+            # Move forward with a constant speed when vanishing point is detected
+            forward_speed_value = SLOW_SPEED
+            self.publisher.publish(Float32(data=forward_speed_value))
+        else:
+            # Stop forward motion if no vanishing point is detected
+            self.publisher.publish(Float32(data=0.0))
+
+
+def MoveForwardVpmain(args=None):
+    rclpy.init(args=args)
+    move_forward_vp = MoveForwardVp()
+    rclpy.spin(move_forward_vp)
+    move_forward_vp.destroy_node()
+    rclpy.shutdown()

@@ -33,6 +33,8 @@
 
     <node pkg="behavior" exec="CenterCorridor" name="CenterCorridor"/>
     <node pkg="behavior" exec="AlignCorridor" name="AlignCorridor"/>
+    <node pkg="behavior" exec="MoveForwardVp" name="MoveForwardVp"/>
+
 
 
 
