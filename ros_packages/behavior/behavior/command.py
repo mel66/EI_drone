@@ -1,7 +1,7 @@
 # command.py
 behaviors = [
     'TakeOff', 'Land', 'Hover', 'MoveForward', 'MoveBackward', 'MoveRight', 'MoveLeft',
-    'TurnLeft', 'TurnRight', 'MoveUp', 'MoveDown', 'MoveForwardVp', 'AlignCorridor', 'CenterCorridor'
+    'TurnLeft', 'TurnRight', 'MoveUp', 'MoveDown', 'MoveForwardVp', 'AlignCorridor', 'CenterCorridor','MoveForwardVp',
 ]
 
 commands = {
@@ -27,6 +27,8 @@ commands = {
     # New GoAhead command, which relies on vanishing point detection
     'GoAhead': [
         (0, 'Hover'),
+        (0, 'MoveForwardVp'),
+        # (0, 'Hover'),
         (0, 'AlignCorridor'),
         (0, 'Hover'),    # Align with the corridor based on vanishing point
         (0, 'CenterCorridor')    # Center within the corridor
@@ -34,7 +36,7 @@ commands = {
 }
 
 
-SLOW_SPEED = 0.6
+SLOW_SPEED = 0.4
 
 import rclpy
 from rclpy.node import Node

@@ -14,7 +14,7 @@ class AlignCorridor(BaseBehavior):
         self.vp_detected_sub = self.create_subscription(Bool, 'vp_detected', self.vp_detected_callback, 10)
         
         # Publisher pour `angular_z`
-        self.publisher = self.create_publisher(Float32, 'angular_z', 10)
+        self.AlignCorridor_publisher = self.create_publisher(Float32, 'angular_z', 10)
         
         # Variables pour stocker l'état de détection et l'offset
         self.x_offset = 0.0
@@ -35,7 +35,7 @@ class AlignCorridor(BaseBehavior):
         if self.vp_detected and self.active:
             angular_z_value = -SLOW_SPEED*self.x_offset
 
-            self.publisher.publish(Float32(data=angular_z_value))
+            self.AlignCorridor_publisher.publish(Float32(data=angular_z_value))
         else:
             # Si pas de point de fuite, ne publie rien (ou publiez un message avec `angular_z = 0` si besoin)
             pass
@@ -58,7 +58,7 @@ class CenterCorridor(BaseBehavior):
         self.vp_detected_sub = self.create_subscription(Bool, 'vp_detected', self.vp_detected_callback, 10)
         
         # Publisher pour `linear_y`
-        self.publisher = self.create_publisher(Float32, 'linear_y', 10)
+        self.Center_publisher = self.create_publisher(Float32, 'linear_y', 10)
         
         # Variables pour stocker l'état de détection et le ratio d'angle
         self.angle_ratio = 0.0
@@ -77,8 +77,8 @@ class CenterCorridor(BaseBehavior):
     def update_centering(self):
         # Vérifie si le point de fuite est détecté
         if self.vp_detected and self.active:
-            linear_y_value = SLOW_SPEED*self.angle_ratio
-            self.publisher.publish(Float32(data=linear_y_value))
+            linear_y_value = SLOW_SPEED*self.angle_ratio*2
+            self.Center_publisher.publish(Float32(data=linear_y_value))
         else:
             # Si pas de point de fuite, ne publie rien (ou publiez un message avec `linear_y = 0` si besoin)
             pass
@@ -102,7 +102,7 @@ class MoveForwardVp(BaseBehavior):
         self.vp_detected_sub = self.create_subscription(Bool, 'vp_detected', self.vp_detected_callback, 10)
         
         # Publisher for `linear_x` to control forward speed
-        self.publisher = self.create_publisher(Float32, 'linear_x', 10)
+        self.MoveFoward_publisher = self.create_publisher(Float32, 'linear_x', 10)
         
         # Variable to store detection status of vanishing point
         self.vp_detected = False
@@ -117,10 +117,10 @@ class MoveForwardVp(BaseBehavior):
         if self.vp_detected and self.active:
             # Move forward with a constant speed when vanishing point is detected
             forward_speed_value = SLOW_SPEED
-            self.publisher.publish(Float32(data=forward_speed_value))
+            self.MoveFoward_publisher.publish(Float32(data=forward_speed_value))
         else:
             # Stop forward motion if no vanishing point is detected
-            self.publisher.publish(Float32(data=0.0))
+            self.MoveFoward_publisher.publish(Float32(data=0.0))
 
 
 def MoveForwardVpmain(args=None):
