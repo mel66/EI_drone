@@ -9,10 +9,9 @@ from cv_bridge import CvBridge
 import cv2
 import numpy as np
 from scipy.ndimage import median_filter
-from std_msgs.msg import String
+from std_msgs.msg import Bool
 
 # Local imports
-from visual_processing import my_line_library as mll  # Assurez-vous que ce module est accessible
 from visual_processing import optical
 
 class Door(Node):
@@ -26,7 +25,8 @@ class Door(Node):
         
         # Publisher pour publier les images de débogage
         self.pub_optical = self.create_publisher(CompressedImage, "video_out/compressed", 10)
-        
+        self.free_space_ahead = self.create_publisher(Bool, 'free_space_ahead', 10)
+
         self.bridge = CvBridge()
         self.previous_frame_line = None  # Stocke la ligne de l'image précédente
         self.previous_frame = None
@@ -71,11 +71,17 @@ class Door(Node):
             # Dessiner les courbes d'intensité et le décalage sur l'image
             optical.draw_function(img_display, self.previous_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 0, 255), thickness=1)
             optical.draw_function(img_display, current_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 255, 0), thickness=1)
-            optical.draw_function(img_display, shift, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
+            #optical.draw_function(img_display, shift, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
             optical.draw_function(img_display, c, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
 
             # Rogner l'image pour retirer les bordures ajoutées par max_shift et radius
             img_display = img_display[:, max_shift + radius : - (max_shift + radius)]
+            
+            free_space = Bool()
+            if c[len(c)//2]:
+                free_space.data = True
+            else: free_space.data = False
+            self.free_space_ahead.publish(free_space)
 
             # Convertir l'image annotée en message ROS compressé et publier
             outmsg = self.bridge.cv2_to_compressed_imgmsg(img_display.copy())

@@ -56,7 +56,7 @@ def local_shift(i1, i2, max_shift, window_radius):
     return optimal_shifts
 
 
-def detect_door( signal2, shift, padding, window_size=7):
+def detect_door( signal2, shift, padding, window_size=5):
     """
     Détecte la présence de mur (0) ou de porte/profondeur (1) en analysant les signaux de décalage.
     Conserve uniquement le plus gros palier détecté pour chaque type (0 ou 1) sans boucle for.
@@ -72,6 +72,12 @@ def detect_door( signal2, shift, padding, window_size=7):
     - c_values (np.ndarray): Tableau indiquant 0 (mur) ou 1 (porte/profondeur) pour chaque point.
     """
 
+    ratio_bas = 0.35
+    percentile_percent = 4*window_size
+    width_threshold = (len(signal2) * 0.30)
+    med_filter = 30
+
+
     assert window_size % 2 == 1, "window_size doit être impair pour centrer la fenêtre"
     half_window = window_size // 2
 
@@ -86,7 +92,7 @@ def detect_door( signal2, shift, padding, window_size=7):
     # Définir les indices des valeurs centrales (en excluant les valeurs de bord)
     central_indices = np.arange(padding, len(shift) - padding)
     # Création d'un masque pour les zones centrales où le shift est bas
-    low_shift_mask = (shift[central_indices] <= max_shift // 3)
+    low_shift_mask = (shift[central_indices] <= max_shift * ratio_bas)
     low_shift_indices = central_indices[low_shift_mask]
 
     # Création de toutes les fenêtres pour les indices centraux de faible shift
@@ -95,18 +101,18 @@ def detect_door( signal2, shift, padding, window_size=7):
     # Calculer l'écart-type sur chaque fenêtre de manière vectorisée
     std_values = np.std(windows, axis=1)
     if len(std_values) > 0:
-        similarity_threshold = np.percentile(std_values,60)
+        similarity_threshold = np.percentile(std_values,percentile_percent)
+        # Mettre à 1 les indices centraux où l'écart-type est supérieur au seuil
+        c_values[low_shift_indices] = (std_values > similarity_threshold).astype(int)
+        c_values = median_filter(c_values, size=med_filter)
     else:
-        similarity_threshold = 0 
-     # Mettre à 1 les indices centraux où l'écart-type est supérieur au seuil
-    c_values[low_shift_indices] = (std_values > similarity_threshold).astype(int)
-    c_values = median_filter(c_values, size=30)
+        c_values[:] =  0
+     
 
     # Appliquer une dilatation binaire pour fusionner les segments proches
     #structure = np.ones(60)
     #c_values = binary_closing(c_values, structure=structure).astype(int)
     # Identifier les segments de `1` et calculer leur largeur
-    width_threshold = (len(signal2) * 0.1)
     labeled_array, num_features = label(c_values == 1)
     for i in range(1, num_features + 1):
         segment_width = np.sum(labeled_array == i)
