@@ -148,23 +148,17 @@ def vanishing_lines(lines, normal_vectors):
 def horizontal_misplacement(frame, vanishing_point):
 
    ans=vanishing_point[0]/frame.shape[1]-0.5
-   if ans<-0.15:
-       return -0.25
-   if ans>0.15:
-       return 0.25
-   return 0
+   
+   return ans
 
 def angle_indicator(line1, line2): #Ratio between left and right angles
    agl1 = np.pi/2 - np.arccos(abs(line1[0]))
    agl2 = np.pi/2 - np.arccos(abs(line2[0]))
    # Return the ratio of the two angles
 #    return agl1/agl2
-   agl=agl1/agl2
-   if agl<0.7:
-       return -0.5
-   if agl>1.5:
-       return 0.5
-   return 0
+   agl=agl1/(agl1+agl2) - 0.5
+   
+   return agl2
 
 
 

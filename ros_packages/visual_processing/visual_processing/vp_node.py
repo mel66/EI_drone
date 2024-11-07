@@ -6,7 +6,7 @@ import rclpy
 from rclpy.node import Node
 from rcl_interfaces.msg import SetParametersResult
 from sensor_msgs.msg import Image, CompressedImage
-from example_interfaces.msg import Float32  # std_msgs.msg.Float32 is deprecated
+from std_msgs.msg import Float32
 from cv_bridge import CvBridge
 import cv2
 import numpy as np
@@ -49,7 +49,6 @@ class VPNode(Node):
 
 
     def cb_params(self, data):
-        self.get_logger().info(f"{data}")
         for p in data:
             name = p.name
             value = p.value
@@ -59,7 +58,6 @@ class VPNode(Node):
     def on_image(self, msg):
 
         frame = self.bridge.compressed_imgmsg_to_cv2(msg, "bgr8")
-        self.get_logger().info(f"Receiving video frame {frame.shape}, of type : {type(frame)}")
         
         # if self.debug_pub.get_subscription_count() > 0:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -118,7 +116,6 @@ class VPNode(Node):
             y = int(intersections[0][1])
             vanish = [x,y]
             if 0 <= x <= frame.shape[1] and 0 <= y <= frame.shape[0]:
-                self.get_logger().info("Le point d'intersection est dans la frame")
                 if self.show_vanish :
                     cv2.circle(frame, vanish, 8, (255, 0, 0), 3) #vanishing point en bleu
                 horizontal_offset = mll.horizontal_misplacement(frame,vanish)
@@ -134,9 +131,10 @@ class VPNode(Node):
                 # print(f"Leften side of frame to vanishing pt : {mll.horizontal_misplacement(frame,vanish)}")
                 # print(f"Ratio angles : {mll.angle_indicator(left[4:6],right[4:6]) - 1}") 
             else:
-                self.get_logger().info("Le point d'intersection est hors de la frame")
+                pass
         else :
-            self.get_logger().info("Not enough vanishing lines")
+            pass
+
         outmsg = self.bridge.cv2_to_compressed_imgmsg(frame.copy())
         self.debug_pub.publish(outmsg)
 
