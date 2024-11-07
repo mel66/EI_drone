@@ -1,0 +1,33 @@
+rosbag2_bagfile_information:
+  compression_format: ''
+  compression_mode: ''
+  custom_data: {}
+  duration:
+    nanoseconds: 28315803857
+  files:
+  - duration:
+      nanoseconds: 28315803857
+    message_count: 989
+    path: door.db3
+    starting_time:
+      nanoseconds_since_epoch: 1560776032558227611
+  message_count: 989
+  relative_file_paths:
+  - door.db3
+  starting_time:
+    nanoseconds_since_epoch: 1560776032558227611
+  storage_identifier: sqlite3
+  topics_with_message_count:
+  - message_count: 848
+    topic_metadata:
+      name: /bebop/image_raw/compressed
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: sensor_msgs/msg/CompressedImage
+  - message_count: 141
+    topic_metadata:
+      name: /bebop/odom
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: nav_msgs/msg/Odometry
+  version: 6

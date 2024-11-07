@@ -132,23 +132,44 @@ def vanishing_lines(lines, normal_vectors):
     kmeans = KMeans(n_clusters=2, random_state=0).fit(normal_vectors)
     labels = kmeans.labels_
     # Séparer les lignes en fonction des clusters
-    return lines[labels == 0], lines[labels == 1]
+    first = lines[labels == 0]
+    #Verifier non vide
+    #Tous les éléments ont cette forme (xa,ya,xb,yb,a,b,c,l)
+    #Prendre premier élement de first, save signe de a
+    
+    #Meme chose pour labels==1
+    #Si Signe a meme signe alors regarder labels==2 ...
+    return sort_vp_lines(lines[labels == 0], lines[labels == 1])
 
-# def horizontal_misplacement(frame, vanishing_point):
+def sort_vp_lines(lines1, lines2):
+    lines1 = lines1.reshape(-1,8)
+    lines2 = lines2.reshape(-1,8)
+            
+    mean1 = np.mean(lines1,axis=0)
+    mean2 = np.mean(lines2,axis=0)
+            
+    a1 = mean1[4]
+    a2 = mean2[4]
+    if a1<0 and a2>0:
+        left = mean1
+        right = mean2
+        return left, right
+    elif a1>0 and a2<0:
+        left = mean2
+        right = mean1
+        return left, right
+    else:
+        return None
 
-#     return (vanishing_point[0]/frame.shape[1] - 1)/2
-
-# def angle_indicator(line1, line2): #Ratio between left and right angles
-#     agl1 = np.pi/2 - np.arccos(abs(line1[0]))
-#     agl2 = np.pi/2 - np.arccos(abs(line2[0]))
-#     # Return the ratio of the two angles
-#     ratio = agl1 / (agl1+agl2)
-#     return ratio - 0.5
-
+def vp_point(left, right):
+    lines = np.stack((left,right))
+    point = intersections(lines)
+    x = int(point[0][0])
+    y = int(point[0][1])
+    return (x,y)
 def horizontal_misplacement(frame, vanishing_point):
 
    ans=vanishing_point[0]/frame.shape[1]-0.5
-   
    return ans
 
 def angle_indicator(line1, line2): #Ratio between left and right angles
