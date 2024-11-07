@@ -50,7 +50,10 @@ class JoyTeleop(Node):
             'MoveForwardBackward': 0,
             'MoveLeftRight': 0,
             'TurnLeftRight': 0,
-            'MoveUpDown': 0
+            'MoveUpDown': 0,
+            'TurnBack' : 0,
+            'DoorLeftRight' : 0, 
+            'SlideLeftRight' : 0,
         }
         # Subscribe to the /joy topic
         self.joy_subscription = self.create_subscription(Joy, '/joy', self.joy_callback, 10)
@@ -92,8 +95,12 @@ class JoyTeleop(Node):
             BUTTON_B: 'Hover',
             BUTTON_Y: 'MoveUp',
             BUTTON_A: 'MoveDown',
-            BUTTON_X:"GoAhead"
+            BUTTON_X:"GoAhead",
+            BUTTON_LB :'UTurn',
         }
+
+
+   
 
         for button_index, command in command_mappings.items():
             current_state = msg.buttons[button_index]
@@ -119,7 +126,6 @@ class JoyTeleop(Node):
                 self.send_command('MoveForward')
                 self.axis_states['MoveForwardBackward'] = 1
             elif msg.axes[AXIS_LEFT_VERTICAL] < 0 and self.axis_states['MoveForwardBackward'] >= 0:
-                self.get_logger().info(f"je suis la {self.axis_states['MoveForwardBackward']}")
                 self.send_command('MoveBackward')
                 self.axis_states['MoveForwardBackward'] = -1
         elif self.axis_states['MoveForwardBackward'] != 0:
@@ -151,8 +157,34 @@ class JoyTeleop(Node):
             self.axis_states['TurnLeftRight'] = 0
 
 
-    
-       
+        if abs(msg.axes[AXIS_CROSS_HORIZONTAL]) > self.deadzone:
+            if msg.axes[AXIS_CROSS_HORIZONTAL] > 0 and self.axis_states['DoorLeftRight'] <= 0:
+                self.send_command('DoorCrossingLeft')
+                self.axis_states['DoorLeftRight'] = 1
+            elif msg.axes[AXIS_CROSS_HORIZONTAL] < 0 and self.axis_states['DoorLeftRight'] >= 0:
+                self.send_command('DoorCrossingRight')
+                self.axis_states['DoorLeftRight'] = -1
+        elif self.axis_states['DoorLeftRight'] != 0:
+            self.axis_states['DoorLeftRight'] = 0
+        
+        
+        if abs(msg.axes[AXIS_CROSS_VERTICAL]) > self.deadzone:
+            if msg.axes[AXIS_CROSS_VERTICAL] > 0 and self.axis_states['SlideLeftRight'] <= 0:
+                self.send_command('SlideLeft')
+                self.axis_states['SlideLeftRight'] = 1
+            elif msg.axes[AXIS_CROSS_VERTICAL] < 0 and self.axis_states['SlideLeftRight'] >= 0:
+                self.send_command('SlideRight')
+                self.axis_states['SlideLeftRight'] = -1
+        elif self.axis_states['SlideLeftRight'] != 0:
+            self.axis_states['SlideLeftRight'] = 0
+
+        if msg.axes[AXIS_LT] < -self.deadzone and self.axis_states['TurnBack'] == 0:
+                self.send_command('TurnBack')
+                self.axis_states['TurnBack'] = 1
+        elif self.axis_states['TurnBack'] != 0:
+            self.axis_states['TurnBack'] = 0
+        
+
 def main(args=None):
     rclpy.init(args=args)
     joy_teleop = JoyTeleop()

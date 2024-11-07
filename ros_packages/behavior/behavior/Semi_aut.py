@@ -1,7 +1,7 @@
 import rclpy
 from .basic_behavior import BaseBehavior
 from std_msgs.msg import Float32, Bool
-import math
+import time
 from .command import SLOW_SPEED
 
 
@@ -128,4 +128,171 @@ def MoveForwardVpmain(args=None):
     move_forward_vp = MoveForwardVp()
     rclpy.spin(move_forward_vp)
     move_forward_vp.destroy_node()
+    rclpy.shutdown()
+
+
+
+  
+
+class UTurn(BaseBehavior):
+    def __init__(self, rotation_duration=2.0, rotation_speed=SLOW_SPEED):
+        super().__init__('UTurn')
+        
+        # Parameters for rotation
+        self.rotation_duration = rotation_duration  # Duration in seconds
+        self.rotation_speed = rotation_speed        # Angular speed (radians per second)
+        
+        # Publisher for `angular_z`
+        self.angular_z_pub = self.create_publisher(Float32, 'angular_z', 10)
+        self.active = False
+
+    def on_status_on(self):
+        self.active = True
+        self.perform_u_turn()
+
+    def perform_u_turn(self):
+        # Start rotating
+        end_time = time.time() + self.rotation_duration
+        while time.time() < end_time and self.active:
+            self.angular_z_pub.publish(Float32(data=self.rotation_speed))
+            time.sleep(0.1)
+        
+        # Stop rotation
+        self.angular_z_pub.publish(Float32(data=0.0))
+        self.active = False
+
+
+def UTurnmain(args=None):
+    rclpy.init(args=args)
+    u_turn = UTurn()
+    rclpy.spin(u_turn)
+    u_turn.destroy_node()
+    rclpy.shutdown()
+
+
+
+class Slide(BaseBehavior):
+    def __init__(self, slide_direction, orientation_duration=1.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
+        super().__init__(f'Slide{slide_direction}')
+        
+        # Parameters for sliding and orientation
+        self.orientation_duration = orientation_duration  # Time to face lateral wall
+        self.slide_duration = slide_duration              # Time to slide
+        self.slide_speed = slide_speed                    # Speed during sliding
+        self.slide_direction = slide_direction            # 'left' or 'right'
+
+        # Publishers for `angular_z` and `linear_y`
+        self.angular_z_pub = self.create_publisher(Float32, 'angular_z', 10)
+        self.linear_y_pub = self.create_publisher(Float32, 'linear_y', 10)
+        self.active = False
+
+    def on_status_on(self):
+        self.active = True
+        self.perform_slide()
+
+    def perform_slide(self):
+        # Step 1: Change orientation to face lateral wall
+        rotation_speed = SLOW_SPEED if self.slide_direction == 'Left' else -SLOW_SPEED
+        end_time = time.time() + self.orientation_duration
+        while time.time() < end_time and self.active:
+            self.angular_z_pub.publish(Float32(data=rotation_speed))
+            time.sleep(0.1)
+        self.angular_z_pub.publish(Float32(data=0.0))
+
+        # Step 2: Slide along the wall
+       # Step 2: Slide movement
+        slide_speed = self.slide_speed if self.slide_direction == 'Left' else -self.slide_speed
+        end_time = time.time() + self.slide_duration
+        while time.time() < end_time and self.active:
+            self.linear_y_pub.publish(Float32(data=slide_speed))
+            time.sleep(0.1)
+        
+        # Stop sliding and deactivate behavior
+        self.linear_y_pub.publish(Float32(data=0.0))
+        self.active = False
+
+
+
+# Child class for sliding left
+class SlideLeft(Slide):
+    def __init__(self, orientation_duration=1.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
+        super().__init__(slide_direction='Left', orientation_duration=orientation_duration, slide_duration=slide_duration, slide_speed=slide_speed)
+
+# Child class for sliding right
+class SlideRight(Slide):
+    def __init__(self, orientation_duration=1.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
+        super().__init__(slide_direction='Right', orientation_duration=orientation_duration, slide_duration=slide_duration, slide_speed=slide_speed)
+
+def SlideLeftmain(args=None, direction='Left'):
+    rclpy.init(args=args)
+    slideLeft = Slide(slide_direction=direction)
+    rclpy.spin(slideLeft)
+    slideLeft.destroy_node()
+    rclpy.shutdown()
+
+def SlideRightmain(args=None, direction='Right'):
+    rclpy.init(args=args)
+    slideRight = Slide(slide_direction=direction)
+    rclpy.spin(slideRight)
+    slideRight.destroy_node()
+    rclpy.shutdown()
+
+
+
+class DoorCrossing(BaseBehavior):
+    def __init__(self, direction, detection_timeout=3.0):
+        super().__init__(f'DoorCrossing{direction}')
+        
+        # Door crossing parameters
+        self.direction = direction                   # 'left' or 'right'
+        self.detection_timeout = detection_timeout   # Maximum time to search for door
+        self.cross_speed = SLOW_SPEED                     # Speed to cross door
+
+        # Publisher for `linear_y`
+        self.linear_y_pub = self.create_publisher(Float32, 'linear_y', 10)
+
+        # Subscription for optical flow-based door detection
+        self.door_detected_sub = self.create_subscription(Bool, f'door_{direction}_detected', self.door_callback, 10)
+        self.door_detected = False
+
+    def door_callback(self, msg):
+        # Update the door detection status
+        self.door_detected = msg.data
+
+    def perform_door_crossing(self):
+        start_time = time.time()
+        while not self.door_detected and (time.time() - start_time) < self.detection_timeout and self.active:
+            time.sleep(0.1)
+
+        if self.door_detected and self.active:
+            # Move laterally to cross the door
+            self.linear_y_pub.publish(Float32(data=self.cross_speed if self.direction == 'Left' else -self.cross_speed))
+            time.sleep(1.5)  # Cross door duration
+            self.linear_y_pub.publish(Float32(data=0.0))  # Stop after crossing
+        else:
+            print("Door not detected within timeout.")
+
+
+# Child class for sliding left
+class DoorCrossingLeft(DoorCrossing):
+    def __init__(self, direction, detection_timeout=3.0):
+        super().__init__(slide_direction='Left', detection_timeout=3.0)
+
+# Child class for sliding right
+class DoorCrossingRight(DoorCrossing):
+    def __init__(self, direction, detection_timeout=3.0):
+        super().__init__(slide_direction='Right', detection_timeout=3.0)
+
+def DoorCrossingLeftmain(args=None, direction='Left'):
+    rclpy.init(args=args)
+    CrossLeft = Slide(slide_direction=direction)
+    rclpy.spin(CrossLeft)
+    CrossLeft.destroy_node()
+    rclpy.shutdown()
+
+def DoorCrossingRightmain(args=None, direction='Right'):
+    rclpy.init(args=args)
+    CrossRight = Slide(slide_direction=direction)
+    rclpy.spin(CrossRight)
+    CrossRight.destroy_node()
     rclpy.shutdown()

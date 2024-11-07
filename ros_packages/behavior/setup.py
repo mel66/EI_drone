@@ -40,7 +40,11 @@ setup(
             'AlignCorridor = behavior.Semi_aut:AlignCorridormain',
             'CenterCorridor = behavior.Semi_aut:CenterCorridormain',
             'MoveForwardVp = behavior.Semi_aut:MoveForwardVpmain',
-
+            'UTurn = behavior.Semi_aut:UTurnmain',
+            'SlideRight = behavior.Semi_aut:SlideRightmain',
+            'SlideLeft = behavior.Semi_aut:SlideLeftmain',            
+            'DoorCrossingLeft = behavior.Semi_aut:DoorCrossingLeftmain',
+            'DoorCrossingRight = behavior.Semi_aut:DoorCrossingRightmain',
 
         ]
     },

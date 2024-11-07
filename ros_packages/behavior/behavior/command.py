@@ -1,7 +1,7 @@
 # command.py
 behaviors = [
     'TakeOff', 'Land', 'Hover', 'MoveForward', 'MoveBackward', 'MoveRight', 'MoveLeft',
-    'TurnLeft', 'TurnRight', 'MoveUp', 'MoveDown', 'MoveForwardVp', 'AlignCorridor', 'CenterCorridor','MoveForwardVp',
+    'TurnLeft', 'TurnRight', 'MoveUp', 'MoveDown', 'MoveForwardVp', 'AlignCorridor', 'CenterCorridor','MoveForwardVp','UTurn', 'SlideLeft', 'SlideRight', 'DoorCrossingLeft', 'DoorCrossingRight'
 ]
 
 commands = {
@@ -23,15 +23,54 @@ commands = {
     # Vertical movement commands
     'MoveUp': [(0, 'Hover'), (0, 'MoveUp')],
     'MoveDown': [(0, 'Hover'), (0, 'MoveDown')],
-
-    # New GoAhead command, which relies on vanishing point detection
+    
     'GoAhead': [
         (0, 'Hover'),
         (0, 'MoveForwardVp'),
-        # (0, 'Hover'),
-        (0, 'AlignCorridor'),
-        (0, 'Hover'),    # Align with the corridor based on vanishing point
-        (0, 'CenterCorridor')    # Center within the corridor
+        (0.5, 'AlignCorridor'),
+        (1.0, 'CenterCorridor')
+    ],
+
+    # New UTurn and TurnBack commands
+    'UTurn': [
+        (0, 'Hover'),
+        (0, 'UTurn')
+    ],
+    'TurnBack': [
+        (0, 'UTurn'),
+        (2.0, 'MoveForwardVp'),
+        (2.5, 'AlignCorridor'),
+        (3.0, 'CenterCorridor')
+    ],
+    
+    # Slide commands
+    'SlideLeft': [
+        (0, 'Hover'),
+        (0, 'SlideLeft'),
+        (1.0, 'AlignCorridor'),
+        (1.5, 'CenterCorridor'),
+        (2.0, 'MoveForwardVp')
+    ],
+    'SlideRight': [
+        (0, 'Hover'),
+        (0, 'SlideRight'),
+        (1.0, 'AlignCorridor'),
+        (1.5, 'CenterCorridor'),
+        (2.0, 'MoveForwardVp')
+    ],
+
+    # Door crossing commands
+    'DoorCrossingLeft': [
+        (0, 'Hover'),
+        (0, 'DoorCrossingLeft'),
+        (1.5, 'AlignCorridor'),
+        (2.0, 'MoveForwardVp')
+    ],
+    'DoorCrossingRight': [
+        (0, 'Hover'),
+        (0, 'DoorCrossingRight'),
+        (1.5, 'AlignCorridor'),
+        (2.0, 'MoveForwardVp')
     ]
 }
 
