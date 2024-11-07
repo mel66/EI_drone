@@ -88,7 +88,7 @@ class Speed_Controller(Node):
 
         # Publishers
 
-        self.target_vel = self.create_publisher(Twist, "/bebop/cmd_vel", 10)
+        self.target_vel = self.create_publisher(Twist, "/target_vel", 10)
 
         # Store the received values for velocity
         self.linear_x = 0.0
@@ -127,8 +127,8 @@ class Speed_Controller(Node):
         Kd2 = 0
         Ki2 = 0
 
-        self.gains_x = {'Kp': Kp1, 'Kd': Kd1 , 'Ki': Ki1}
-        self.gains_y = {'Kp': Kp2, 'Kd': Kd2, 'Ki': Ki2 }
+        self.gains_x = {'Kp': 0.92, 'Kd': 0.23 , 'Ki': 0.92}
+        self.gains_y = {'Kp': 0.92, 'Kd': 0.23, 'Ki': 0.92 }
         self.pid_x = PID(self.gains_x)
         self.pid_y = PID(self.gains_y)
         self.t0 = self.get_clock().now()
