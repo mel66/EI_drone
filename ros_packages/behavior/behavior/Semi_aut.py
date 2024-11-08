@@ -3,7 +3,19 @@ from .basic_behavior import BaseBehavior
 from std_msgs.msg import Float32, Bool
 import time
 from .command import SLOW_SPEED
-from .auto_off import AutoOffBehavior
+import math
+from from .auto_off import AutoOffBehavior
+
+
+#slide behavior
+from nav_msgs.msg import Odometry
+from geometry_msgs.msg import Twist
+
+#quat calculation
+import sympy
+from sympy.algebras.quaternion import Quaternion
+from sympy import symbols
+from sympy import conjugate
 
 class AlignCorridor(BaseBehavior):
     def __init__(self):
@@ -185,32 +197,106 @@ class Slide(BaseBehavior):
         # Publishers for `angular_z` and `linear_y`
         self.angular_z_pub = self.create_publisher(Float32, 'angular_z', 10)
         self.linear_y_pub = self.create_publisher(Float32, 'linear_y', 10)
+        self.linear_x_pub = self.create_publisher(Float32, 'linear_x', 10)
+
+        #subscribe to odometry
+        self.sub_odom = self.create_subscription(Odometry, "/bebop/odom", self.on_odom, qos_profile=1)
+
         self.active = False
+        self.odom = Twist()
 
     def on_status_on(self):
         self.active = True
         self.perform_slide()
 
+    def on_odom(self,msg):
+        self.odom = msg.data
+
     def perform_slide(self):
-        # Step 1: Change orientation to face lateral wall
+        #valeurs a modifier
+        DIST_TOLERANCE = 5
+        ANGLE_TOLERANCE = 0.5
+        Kp_dist = 0.92
+        Kp_theta = 0.92
+
+        # Étape 1 : Enregistrement de l'orientation, position initiale
+        self.quats = self.odom.pose.pose.orientation
+        qx, qy, qz, qw = self.quats.x, self.quats.y, self.quats.z, self.quats.w
+        self.initial_position = self.odom.pose.pose.position
+
+        qx_ = symbols('qx')
+        qy_ = symbols('qy')
+        qz_ = symbols('qz')
+        qw_ = symbols('qw')
+        q1 = Quaternion(qw_, qx_, qy_, qz_, real_field=True)
+
+        # Calcul du vecteur d'axe horizontal en utilisant les quaternions
+        v = Quaternion(qx, qy, qz, qw)
+        rotated_vector = q1 * v * q1.conjugate()
+        horizontal_res = Quaternion(rotated_vector.a, rotated_vector.b, rotated_vector.c, 0.0).normalize()
+
+        # Étape 2 : Rotation initiale en boucle ouverte
         rotation_speed = SLOW_SPEED if self.slide_direction == 'Left' else -SLOW_SPEED
         end_time = time.time() + self.orientation_duration
         while time.time() < end_time and self.active:
             self.angular_z_pub.publish(Float32(data=rotation_speed))
+            self.linear_x_pub.publish(Float32(data=self.slide_speed))
             time.sleep(0.1)
+        
+        # Arrêter la rotation
         self.angular_z_pub.publish(Float32(data=0.0))
+        self.linear_x_pub.publish(Float32(data=0.0))
 
-        # Step 2: Slide along the wall
-       # Step 2: Slide movement
+        # Étape 3 : Glissement latéral en boucle ouverte
         slide_speed = self.slide_speed if self.slide_direction == 'Left' else -self.slide_speed
         end_time = time.time() + self.slide_duration
         while time.time() < end_time and self.active:
             self.linear_y_pub.publish(Float32(data=slide_speed))
             time.sleep(0.1)
         
-        # Stop sliding and deactivate behavior
+        # Arrêter le glissement en boucle ouverte
         self.linear_y_pub.publish(Float32(data=0.0))
+
+        # Étape 4 : Boucle fermée pour rester aligné sur l'axe
+        self.active = True
+        while self.active:
+            # Position actuelle et direction du drone
+            current_pos = self.odom.pose.pose.position
+            forward_direction = Quaternion(self.quats.w, self.quats.x, self.quats.y, self.quats.z).normalize()
+            
+            # Calcul du vecteur PD (distance signée) et de l'angle θ
+            P0 = self.initial_position  # Position initiale enregistrée au déclenchement de `slide`
+            v = self.axis_direction  # Vecteur directionnel de l’axe enregistré
+            OP0_D = Quaternion(current_pos.x - P0.x, current_pos.y - P0.y, 0.0)
+            
+            PD = (Quaternion(1, 0, 0) - v * v.T) * OP0_D
+            signed_distance = PD.norm() * (1 if forward_direction.dot(PD) >= 0 else -1)
+            
+            # Calcul de l'angle θ pour la rotation
+            theta = math.atan2(PD.sin(), PD.cos())
+
+            # Calcul des commandes avec un contrôleur proportionnel
+            linear_x = -Kp_dist * signed_distance
+            angular_z = -Kp_theta * theta
+            
+            # Envoyer les commandes
+            self.linear_x_pub.publish(Float32(data=linear_x))
+            self.angular_z_pub.publish(Float32(data=angular_z))
+            
+            # Condition de désactivation
+            if abs(signed_distance) < DIST_TOLERANCE and abs(theta) < ANGLE_TOLERANCE:
+                self.active = False
+                break
+
+            time.sleep(0.1)
+        
+        # Arrêter le comportement
+        self.linear_x_pub.publish(Float32(data=0.0))
+        self.angular_z_pub.publish(Float32(data=0.0))
         self.active = False
+
+
+
 
 
 
