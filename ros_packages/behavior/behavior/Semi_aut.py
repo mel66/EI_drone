@@ -5,7 +5,7 @@ import time
 from .command import SLOW_SPEED
 import math
 from  .auto_off import AutoOffBehavior
-
+import numpy as np
 
 #slide behavior
 from nav_msgs.msg import Odometry
@@ -138,12 +138,10 @@ class MoveForwardVp(BaseBehavior):
                 forward_speed_value = SLOW_SPEED
                 self.MoveFoward_publisher.publish(Float32(data=forward_speed_value))
             else:
-                # Stop forward motion if no vanishing point is detected
-                # self.MoveFoward_publisher.publish(Float32(data=0.0))
                 pass
 
         else :
-            pass
+           self.MoveFoward_publisher.publish(Float32(data=0.0))
 
 def MoveForwardVpmain(args=None):
     rclpy.init(args=args)
@@ -187,7 +185,7 @@ def UTurnmain(args=None):
 
 
 class Slide(BaseBehavior):
-    def __init__(self, slide_direction, orientation_duration=2.25, slide_duration=2.0, slide_speed=SLOW_SPEED/2):
+    def __init__(self, slide_direction, orientation_duration=2.25, slide_duration=2.0, slide_speed=SLOW_SPEED):
         super().__init__(f'Slide{slide_direction}')
         
         # Parameters for sliding and orientation
@@ -260,9 +258,12 @@ class Slide(BaseBehavior):
             v = Quaternion(qx, qy, qz, qw)
 
             OP0_D = Quaternion(current_pos.x - P0.x, current_pos.y - P0.y, 0.0)
-            
-            PD = (Quaternion(1, 0, 0) - v * v.T) * OP0_D
-            signed_distance = PD.norm() * (1 if forward_direction.dot(PD) >= 0 else -1)
+        
+            PD = (Quaternion(1, 0, 0) - v * v.conjugate()) * OP0_D
+            x, y, z = PD.axis
+            PD_vector = np.array([x, y, z])
+
+            signed_distance = PD.norm() * (1 if np.dot(PD_vector, [forward_direction.x, forward_direction.y, forward_direction.z]) >= 0 else -1)
             
             # Calcul de l'angle θ pour la rotation
             theta = math.atan2(PD.sin(), PD.cos())
@@ -300,12 +301,12 @@ class Slide(BaseBehavior):
 
 # Child class for sliding left
 class SlideLeft(Slide):
-    def __init__(self, orientation_duration=1.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
+    def __init__(self, orientation_duration=2.25, slide_duration=2.0, slide_speed=SLOW_SPEED):
         super().__init__(slide_direction='Left', orientation_duration=orientation_duration, slide_duration=slide_duration, slide_speed=slide_speed)
 
 # Child class for sliding right
 class SlideRight(Slide):
-    def __init__(self, orientation_duration=1.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
+    def __init__(self, orientation_duration=2.25, slide_duration=2.0, slide_speed=SLOW_SPEED):
         super().__init__(slide_direction='Right', orientation_duration=orientation_duration, slide_duration=slide_duration, slide_speed=slide_speed)
 
 def SlideLeftmain(args=None, direction='Left'):

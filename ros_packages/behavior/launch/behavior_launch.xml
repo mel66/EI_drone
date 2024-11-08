@@ -32,6 +32,16 @@
     <node pkg="behavior" exec="TurnRight" name="TurnRight"/>
     
 
+     <node pkg="visual_processing" exec="door" name="door">
+    <!-- Remap the input topic -->
+    <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
+    <remap from="/speed" to="/bebop/odom"/>
+    </node>
+     
+    <!-- Viewer for the images -->
+    <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/video_out/compressed"/>
+
+
     <node pkg="behavior" exec="MoveBackward" name="MoveBackward"/>
     <node pkg="behavior" exec="MoveRight" name="MoveRight"/>
     <node pkg="behavior" exec="MoveUp" name="MoveUp"/>

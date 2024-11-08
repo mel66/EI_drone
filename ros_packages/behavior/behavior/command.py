@@ -46,16 +46,16 @@ commands = {
     'SlideLeft': [
          
         (0, 'SlideLeft'),
-        (1.0, 'AlignCorridor'),
-        (1.5, 'CenterCorridor'),
-        (2.0, 'MoveForwardVp')
+        # (1.0, 'AlignCorridor'),
+        # (1.5, 'CenterCorridor'),
+        # (2.0, 'MoveForwardVp')
     ],
     'SlideRight': [
          
         (0, 'SlideRight'),
-        (1.0, 'AlignCorridor'),
-        (1.5, 'CenterCorridor'),
-        (2.0, 'MoveForwardVp')
+        # (1.0, 'AlignCorridor'),
+        # (1.5, 'CenterCorridor'),
+        # (2.0, 'MoveForwardVp')
     ],
 
     # Door crossing commands

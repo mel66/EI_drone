@@ -24,7 +24,7 @@ class Door(Node):
         )
         
         # Publisher pour publier les images de débogage
-        self.pub_optical = self.create_publisher(CompressedImage, "video_out/compressed", 10)
+        self.pub_optical = self.create_publisher(CompressedImage, "video_out", 10)
         self.free_space_ahead = self.create_publisher(Bool, 'free_space_ahead', 10)
 
         self.bridge = CvBridge()
