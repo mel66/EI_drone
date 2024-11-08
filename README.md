@@ -13,24 +13,28 @@ Ce projet contient le code pour le contrôle du drone Parrot à l’aide de ROS 
 ## Instructions d'installation et d'utilisation
 
 ### 1. Placer le terminal dans le répertoire du projet
-
+```bash
 cd EI_drone
-
+```
 ### 2. Compiler le projet
+```bash
 
 colcon build
-
+```
 ### 3. Sourcer l'environnement ROS 2
 
 Après la compilation, sourcez l'environnement pour que les nouveaux packages soient reconnus :
-source install/setup.bash
+```bash
 
+source install/setup.bash
+```
 ### 4. Lancer le projet
 
 Utilisez le fichier de lancement ROS 2 pour initialiser les comportements du drone :
+```bash
 
 ros2 launch behavior behavior_launch.xml
-
+```
 
 
 
