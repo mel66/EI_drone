@@ -11,18 +11,18 @@ commands = {
     'EmergencyStop': [(0, 'Hover'), (1.0, 'Land')],
     
     # Movement commands
-    'MoveForward': [(0, 'Hover'), (0, 'MoveForward')],
-    'MoveBackward': [(0, 'Hover'), (0, 'MoveBackward')],
-    'MoveLeft': [(0, 'Hover'), (0, 'MoveLeft')],
-    'MoveRight': [(0, 'Hover'), (0, 'MoveRight')],
+    'MoveForward': [(0, 'Hover'), (0.5, 'MoveForward')],
+    'MoveBackward': [(0, 'Hover'), (0.5, 'MoveBackward')],
+    'MoveLeft': [(0, 'Hover'), (0.5, 'MoveLeft')],
+    'MoveRight': [(0, 'Hover'), (0.5, 'MoveRight')],
     
     # Rotation commands
-    'TurnLeft': [(0, 'Hover'), (0, 'TurnLeft')],
-    'TurnRight': [(0, 'Hover'), (0, 'TurnRight')],
+    'TurnLeft': [(0, 'Hover'), (0.5, 'TurnLeft')],
+    'TurnRight': [(0, 'Hover'), (0.5, 'TurnRight')],
     
     # Vertical movement commands
-    'MoveUp': [(0, 'Hover'), (0, 'MoveUp')],
-    'MoveDown': [(0, 'Hover'), (0, 'MoveDown')],
+    'MoveUp': [(0, 'Hover'), (0.5, 'MoveUp')],
+    'MoveDown': [(0, 'Hover'), (0.5, 'MoveDown')],
     
     'GoAhead': [
         (0, 'Hover'),
@@ -34,7 +34,7 @@ commands = {
     # New UTurn and TurnBack commands
     'UTurn': [
         (0, 'Hover'),
-        (0, 'UTurn'),
+        (0.5, 'UTurn'),
     ],
     'TurnBack': [
         (0, 'UTurn'),

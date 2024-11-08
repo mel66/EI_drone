@@ -145,8 +145,11 @@ def sort_vp_lines(lines1, lines2):
     lines1 = lines1.reshape(-1,8)
     lines2 = lines2.reshape(-1,8)
             
-    mean1 = np.mean(lines1,axis=0)
-    mean2 = np.mean(lines2,axis=0)
+    # mean1 = np.mean(lines1,axis=0)
+    # mean2 = np.mean(lines2,axis=0)
+
+    mean1 = lines1[0]
+    mean2 = lines2[0]
             
     a1 = mean1[4]
     a2 = mean2[4]

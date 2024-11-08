@@ -3,7 +3,7 @@ from .basic_behavior import BaseBehavior
 from std_msgs.msg import Float32, Bool
 import time
 from .command import SLOW_SPEED
-
+from .auto_off import AutoOffBehavior
 
 class AlignCorridor(BaseBehavior):
     def __init__(self):
@@ -32,14 +32,16 @@ class AlignCorridor(BaseBehavior):
 
     def update_alignment(self):
         # Vérifie si le point de fuite est détecté
-        if self.vp_detected and self.active:
-            angular_z_value = -SLOW_SPEED*self.x_offset
+        if self.vp_detected :
+            if  self.active:
+                angular_z_value = -SLOW_SPEED*self.x_offset
 
-            self.AlignCorridor_publisher.publish(Float32(data=angular_z_value))
-        else:
-            # Si pas de point de fuite, ne publie rien (ou publiez un message avec `angular_z = 0` si besoin)
+                self.AlignCorridor_publisher.publish(Float32(data=angular_z_value))
+            else:
+                # Si pas de point de fuite, ne publie rien (ou publiez un message avec `angular_z = 0` si besoin)
+                self.AlignCorridor_publisher.publish(Float32(data=0.0))
+        else : 
             pass
-
 
 def AlignCorridormain(args=None):
     rclpy.init(args=args)
@@ -76,13 +78,15 @@ class CenterCorridor(BaseBehavior):
 
     def update_centering(self):
         # Vérifie si le point de fuite est détecté
-        if self.vp_detected and self.active:
-            linear_y_value = SLOW_SPEED*self.angle_ratio*2
-            self.Center_publisher.publish(Float32(data=linear_y_value))
-        else:
-            # Si pas de point de fuite, ne publie rien (ou publiez un message avec `linear_y = 0` si besoin)
+        if self.vp_detected:
+            if self.active:
+                linear_y_value = SLOW_SPEED*self.angle_ratio*2
+                self.Center_publisher.publish(Float32(data=linear_y_value))
+            else:
+                # Si pas de point de fuite, ne publie rien (ou publiez un message avec `linear_y = 0` si besoin)
+                self.Center_publisher.publish(Float32(data=0.0))
+        else: 
             pass
-
 
 def CenterCorridormain(args=None):
     rclpy.init(args=args)
@@ -114,14 +118,16 @@ class MoveForwardVp(BaseBehavior):
 
     def update_forward_motion(self):
         # Check if the vanishing point is detected
-        if self.vp_detected and self.active:
-            # Move forward with a constant speed when vanishing point is detected
-            forward_speed_value = SLOW_SPEED
-            self.MoveFoward_publisher.publish(Float32(data=forward_speed_value))
-        else:
-            # Stop forward motion if no vanishing point is detected
-            self.MoveFoward_publisher.publish(Float32(data=0.0))
-
+        if self.vp_detected:
+            if self.active:
+                # Move forward with a constant speed when vanishing point is detected
+                forward_speed_value = SLOW_SPEED
+                self.MoveFoward_publisher.publish(Float32(data=forward_speed_value))
+            else:
+                # Stop forward motion if no vanishing point is detected
+                self.MoveFoward_publisher.publish(Float32(data=0.0))
+        else :
+            pass
 
 def MoveForwardVpmain(args=None):
     rclpy.init(args=args)
@@ -134,32 +140,23 @@ def MoveForwardVpmain(args=None):
 
   
 
-class UTurn(BaseBehavior):
-    def __init__(self, rotation_duration=5.0, rotation_speed=SLOW_SPEED):
-        super().__init__('UTurn')
+class UTurn(AutoOffBehavior):
+    def __init__(self):
+        super().__init__('UTurn',off_duration=5.0)
         
-        # Parameters for rotation
-        self.rotation_duration = rotation_duration  # Duration in seconds
-        self.rotation_speed = rotation_speed        # Angular speed (radians per second)
         
         # Publisher for `angular_z`
         self.angular_z_pub = self.create_publisher(Float32, 'angular_z', 10)
-        self.active = False
 
     def on_status_on(self):
-        self.active = True
-        self.perform_u_turn()
+         # Start rotating
+        if self.active:
+            self.off_timer.reset()
+            self.angular_z_pub.publish(Float32(data=SLOW_SPEED))
 
-    def perform_u_turn(self):
-        # Start rotating
-        end_time = time.time() + self.rotation_duration
-        while time.time() < end_time and self.active:
-            self.angular_z_pub.publish(Float32(data=self.rotation_speed))
-            time.sleep(0.1)
         
-        # Stop rotation
-        self.angular_z_pub.publish(Float32(data=0.0))
-        self.active = False
+        else:        
+            self.angular_z_pub.publish(Float32(data=0.0))
 
 
 def UTurnmain(args=None):
