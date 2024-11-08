@@ -8,24 +8,23 @@ commands = {
     'TakeOff': [(0, 'TakeOff')],
     'Land': [(0, 'Land')],
     'Hover': [(0, 'Hover')],
-    'EmergencyStop': [(0, 'Hover'), (1.0, 'Land')],
+    'EmergencyStop': [(1.0, 'Land')],
     
     # Movement commands
-    'MoveForward': [(0, 'Hover'), (0.5, 'MoveForward')],
-    'MoveBackward': [(0, 'Hover'), (0.5, 'MoveBackward')],
-    'MoveLeft': [(0, 'Hover'), (0.5, 'MoveLeft')],
-    'MoveRight': [(0, 'Hover'), (0.5, 'MoveRight')],
+    'MoveForward': [(0, 'MoveForward')],
+    'MoveBackward': [(0, 'MoveBackward')],
+    'MoveLeft': [(0, 'MoveLeft')],
+    'MoveRight': [(0, 'MoveRight')],
     
     # Rotation commands
-    'TurnLeft': [(0, 'Hover'), (0.5, 'TurnLeft')],
-    'TurnRight': [(0, 'Hover'), (0.5, 'TurnRight')],
+    'TurnLeft': [(0, 'TurnLeft')],
+    'TurnRight': [(0, 'TurnRight')],
     
     # Vertical movement commands
-    'MoveUp': [(0, 'Hover'), (0.5, 'MoveUp')],
-    'MoveDown': [(0, 'Hover'), (0.5, 'MoveDown')],
+    'MoveUp': [(0, 'MoveUp')],
+    'MoveDown': [ (0, 'MoveDown')],
     
     'GoAhead': [
-        (0, 'Hover'),
         (0, 'MoveForwardVp'),
         (0.5, 'AlignCorridor'),
         (1.0, 'CenterCorridor')
@@ -33,27 +32,27 @@ commands = {
 
     # New UTurn and TurnBack commands
     'UTurn': [
-        (0, 'Hover'),
-        (0.5, 'UTurn'),
+    
+        (0 ,'UTurn'),
     ],
     'TurnBack': [
         (0, 'UTurn'),
-        (2.0, 'MoveForwardVp'),
-        (2.5, 'AlignCorridor'),
-        (3.0, 'CenterCorridor')
+        (4.5, 'MoveForwardVp'),
+        (5, 'AlignCorridor'),
+        (5.5, 'CenterCorridor')
     ],
     
     # Slide commands
     'SlideLeft': [
-        (0, 'Hover'),
-        (0.5, 'SlideLeft'),
+         
+        (0, 'SlideLeft'),
         (1.0, 'AlignCorridor'),
         (1.5, 'CenterCorridor'),
         (2.0, 'MoveForwardVp')
     ],
     'SlideRight': [
-        (0, 'Hover'),
-        (0.5, 'SlideRight'),
+         
+        (0, 'SlideRight'),
         (1.0, 'AlignCorridor'),
         (1.5, 'CenterCorridor'),
         (2.0, 'MoveForwardVp')
@@ -61,14 +60,14 @@ commands = {
 
     # Door crossing commands
     'DoorCrossingLeft': [
-        (0, 'Hover'),
-        (0.5, 'DoorCrossingLeft'),
+         
+        (0, 'DoorCrossingLeft'),
         (1.5, 'AlignCorridor'),
         (2.0, 'MoveForwardVp')
     ],
     'DoorCrossingRight': [
-        (0, 'Hover'),
-        (0.5, 'DoorCrossingRight'),
+         
+        (0, 'DoorCrossingRight'),
         (1.5, 'AlignCorridor'),
         (2.0, 'MoveForwardVp')
     ]
@@ -81,6 +80,7 @@ import rclpy
 from rclpy.node import Node
 from std_msgs.msg import String
 from behavior_interface.msg import Command,BehaviorStatus  # Assuming Command.msg is defined
+from std_msgs.msg import Bool
 
 
 import time
@@ -98,7 +98,8 @@ class CommandNode(Node):
 
         # Subscribe to the command topic
         self.command_subscription = self.create_subscription(Command, 'command', self.command_callback, 10)
-        
+        self.hover_publisher = self.create_publisher(Bool, 'hover', 10)
+
         # Publisher to activate behaviors
         self.behavior_publisher = self.create_publisher(BehaviorStatus, 'behavior', 10)
         
@@ -110,17 +111,19 @@ class CommandNode(Node):
         self.get_logger().info(f"Received command: {command_name}")
 
         if command_name in self.commands:
+            self.hover_publisher.publish(Bool(data=True))
             self.execute_command(command_name)
         else:
             self.get_logger().warning(f"Unknown command: {command_name}")
 
     def execute_command(self, command_name):
         # Deactivate all behaviors
+        
         self.deactivate_all_behaviors()
 
         # Get the current time
         start_time = time.time()
-
+        
         # Schedule each behavior in the command with the appropriate delay
         for delay, behavior_name in self.commands[command_name]:
             activation_time = start_time + delay
