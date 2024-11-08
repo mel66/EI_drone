@@ -10,9 +10,9 @@
     <!-- Remap the input topic -->
     <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
     <remap from="/speed" to="/bebop/odom"/>
-    <remap from="video_out" to="/bebop/vp/compressed"/>
+    <remap from="video_out" to="/bebop/door/compressed"/>
   </node>
   
   <!-- Viewer for the images -->
-  <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/bebop/vp/compressed"/>
+  <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/bebop/door/compressed"/>
 </launch>

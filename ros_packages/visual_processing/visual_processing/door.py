@@ -80,7 +80,7 @@ class Door(Node):
             optical.draw_function(img_display, self.previous_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 0, 255), thickness=1)
             optical.draw_function(img_display, current_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 255, 0), thickness=1)
             optical.draw_function(img_display, wall_door, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
-            optical.draw_function(img_display, distances, hmin=10, hmax=img_display.shape[0]//2-10, ymin=np.min(distances), ymax=np.max(distances), color=(255, 255, 0), thickness=1)
+            #optical.draw_function(img_display, distances, hmin=10, hmax=img_display.shape[0]//2-10, ymin=np.min(distances), ymax=np.max(distances), color=(255, 255, 0), thickness=1)
 
 
             # Rogner l'image pour retirer les bordures ajoutées par max_shift et radius
