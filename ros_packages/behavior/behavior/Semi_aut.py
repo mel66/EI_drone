@@ -135,7 +135,7 @@ def MoveForwardVpmain(args=None):
   
 
 class UTurn(BaseBehavior):
-    def __init__(self, rotation_duration=2.0, rotation_speed=SLOW_SPEED):
+    def __init__(self, rotation_duration=5.0, rotation_speed=SLOW_SPEED):
         super().__init__('UTurn')
         
         # Parameters for rotation
@@ -172,7 +172,7 @@ def UTurnmain(args=None):
 
 
 class Slide(BaseBehavior):
-    def __init__(self, slide_direction, orientation_duration=1.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
+    def __init__(self, slide_direction, orientation_duration=3.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
         super().__init__(f'Slide{slide_direction}')
         
         # Parameters for sliding and orientation

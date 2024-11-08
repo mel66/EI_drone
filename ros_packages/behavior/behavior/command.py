@@ -34,7 +34,7 @@ commands = {
     # New UTurn and TurnBack commands
     'UTurn': [
         (0, 'Hover'),
-        (0, 'UTurn')
+        (0, 'UTurn'),
     ],
     'TurnBack': [
         (0, 'UTurn'),
@@ -46,14 +46,14 @@ commands = {
     # Slide commands
     'SlideLeft': [
         (0, 'Hover'),
-        (0, 'SlideLeft'),
+        (0.5, 'SlideLeft'),
         (1.0, 'AlignCorridor'),
         (1.5, 'CenterCorridor'),
         (2.0, 'MoveForwardVp')
     ],
     'SlideRight': [
         (0, 'Hover'),
-        (0, 'SlideRight'),
+        (0.5, 'SlideRight'),
         (1.0, 'AlignCorridor'),
         (1.5, 'CenterCorridor'),
         (2.0, 'MoveForwardVp')
@@ -62,13 +62,13 @@ commands = {
     # Door crossing commands
     'DoorCrossingLeft': [
         (0, 'Hover'),
-        (0, 'DoorCrossingLeft'),
+        (0.5, 'DoorCrossingLeft'),
         (1.5, 'AlignCorridor'),
         (2.0, 'MoveForwardVp')
     ],
     'DoorCrossingRight': [
         (0, 'Hover'),
-        (0, 'DoorCrossingRight'),
+        (0.5, 'DoorCrossingRight'),
         (1.5, 'AlignCorridor'),
         (2.0, 'MoveForwardVp')
     ]
