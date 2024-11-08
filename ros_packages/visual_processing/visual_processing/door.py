@@ -36,6 +36,9 @@ class Door(Node):
             Float32, "/speed", self._on_speed, 10
         )
         self.current_speed = 0.0
+        self.gamma = 0.5 # Facteur de la caméra, à ajuster 
+        self.MAX_DISTANCE = 1000
+
 
     def _on_speed(self, msg):
         self.current_speed = msg.data
@@ -48,6 +51,7 @@ class Door(Node):
         # Récupérer la ligne horizontale au milieu de l'image
         middle_row = gray.shape[0] // 2
         current_frame_line = gray[middle_row, :]
+        
 
         max_shift = 40
         radius = 40
@@ -59,9 +63,13 @@ class Door(Node):
                 current_frame_line, self.previous_frame_line, max_shift=max_shift, window_radius=radius
             )
             
+            # Calcul des distances pour chaque pixel en utilisant la formule d = gamma * v / f
+            f = np.abs(shift)  # Flux optique pour chaque pixel
+            distances = np.where(f != 0, (self.gamma * self.current_speed) / f, self.MAX_DISTANCE)  # Évite la division par zéro
+
             # Ajouter un padding pour aligner le shift avec les positions de l'image
             padding = max_shift + radius
-            c = optical.detect_door(current_frame_line, shift, padding)#La fonction distingue les mur de couleur uniforme des portes avec profondeur
+            wall_door = optical.detect_door(current_frame_line, shift, padding)#La fonction distingue les mur de couleur uniforme des portes avec profondeur
 
 
             # Visualiser les courbes sur l'image
@@ -71,8 +79,9 @@ class Door(Node):
             # Dessiner les courbes d'intensité et le décalage sur l'image
             optical.draw_function(img_display, self.previous_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 0, 255), thickness=1)
             optical.draw_function(img_display, current_frame_line, hmin=img_display.shape[0]//2, hmax=img_display.shape[0]-10, ymin=0, ymax=255, color=(0, 255, 0), thickness=1)
-            #optical.draw_function(img_display, shift, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=max_shift, color=(255, 0, 0), thickness=1)
-            optical.draw_function(img_display, c, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
+            optical.draw_function(img_display, wall_door, hmin=10, hmax=img_display.shape[0]//2-10, ymin=0, ymax=1, color=(255, 255, 0), thickness=1)
+            optical.draw_function(img_display, distances, hmin=10, hmax=img_display.shape[0]//2-10, ymin=np.min(distances), ymax=np.max(distances), color=(255, 255, 0), thickness=1)
+
 
             # Rogner l'image pour retirer les bordures ajoutées par max_shift et radius
             img_display = img_display[:, max_shift + radius : - (max_shift + radius)]
@@ -80,17 +89,22 @@ class Door(Node):
 
             # Y a t il de l'espace en face
             # Définir une fenêtre centrée sur le milieu de `c`
-            window_size = 10
-            start = max(0, len(c) // 2 - window_size // 2)
-            end = min(len(c), len(c) // 2 + window_size // 2)
+            threshold_distance = 1.5  # Distance seuil pour considérer un espace libre
 
+            window_size = 10
+            start = max(0, len(wall_door) // 2 - window_size // 2)
+            end = min(len(wall_door), len(wall_door) // 2 + window_size // 2)
+
+            window_distances = distances[start:end]
+            window_mur_door = wall_door[start:end]
+
+            window = np.logical_and(window_distances < threshold_distance , window_mur_door == 1)
             # Calculer le pourcentage de valeurs égales à 1 dans la fenêtre
-            window = c[start:end]
-            percentage_ones = np.sum(window == 1) / len(window)
+            percentage = np.sum(window) / len(window_distances)
 
             # Vérifier si le pourcentage dépasse 70 %
             free_space = Bool()
-            free_space.data = bool(percentage_ones >= 0.7)
+            free_space.data = bool(percentage >= 0.7)
             self.free_space_ahead.publish(free_space)
 
             # free_space = Bool()
