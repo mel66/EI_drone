@@ -52,8 +52,6 @@ class VPNode(Node):
     def on_image(self, msg):
 
         frame = self.bridge.compressed_imgmsg_to_cv2(msg, "bgr8")
-        #self.get_logger().info(f"Receiving video frame {frame.shape}, of type : {type(frame)}")        
-        # if self.debug_pub.get_subscription_count() > 0:
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         lines = self.lsd.detect(gray)[0]
         lines = mll.from_lsd(lines)
@@ -61,8 +59,6 @@ class VPNode(Node):
         line_lengths = np.linalg.norm(lines[:, 2:4] - lines[:, 0:2], axis=1)
         lines = lines[line_lengths > self.min_length]
 
-        # if self.show_lines:
-        #     mll.draw_lines(frame, lines, (20, 100, 100), 1)
 
         # Filter lines above the ceiling
         lines = lines[np.logical_and(lines[:, 1] > self.ceiling, lines[:, 3] > self.ceiling)]
