@@ -11,7 +11,6 @@
     <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
     <remap from="/speed" to="/bebop/odom"/>
     <remap from="video_out" to="/bebop/vp/compressed"/>
-
   </node>
   
   <!-- Viewer for the images -->

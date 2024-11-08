@@ -77,11 +77,27 @@ class Door(Node):
             # Rogner l'image pour retirer les bordures ajoutées par max_shift et radius
             img_display = img_display[:, max_shift + radius : - (max_shift + radius)]
             
+
+            # Y a t il de l'espace en face
+            # Définir une fenêtre centrée sur le milieu de `c`
+            window_size = 10
+            start = max(0, len(c) // 2 - window_size // 2)
+            end = min(len(c), len(c) // 2 + window_size // 2)
+
+            # Calculer le pourcentage de valeurs égales à 1 dans la fenêtre
+            window = c[start:end]
+            percentage_ones = np.sum(window == 1) / len(window)
+
+            # Vérifier si le pourcentage dépasse 70 %
             free_space = Bool()
-            if c[len(c)//2]:
-                free_space.data = True
-            else: free_space.data = False
+            free_space.data = bool(percentage_ones >= 0.7)
             self.free_space_ahead.publish(free_space)
+
+            # free_space = Bool()
+            # if c[len(c)//2]:
+            #     free_space.data = True
+            # else: free_space.data = False
+            # self.free_space_ahead.publish(free_space)
 
             # Convertir l'image annotée en message ROS compressé et publier
             outmsg = self.bridge.cv2_to_compressed_imgmsg(img_display.copy())
@@ -90,7 +106,7 @@ class Door(Node):
         # Mettre à jour la ligne précédente pour la prochaine comparaison
         self.previous_frame_line = current_frame_line
         self.previous_frame = frame
-        self.get_logger().info("New frame")
+        # self.get_logger().info("New frame")
 
 
 def main(args=None):
