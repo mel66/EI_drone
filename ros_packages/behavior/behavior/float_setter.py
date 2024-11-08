@@ -22,5 +22,6 @@ class FloatSetter(BaseBehavior):
             self.publisher.publish(Float32(data=self.value))
 
         else:
-            self.publisher.publish(Float32(data=0.0))
+            pass
+            # self.publisher.publish(Float32(data=0.0))
             self.get_logger().info(f"{self.name} inactive.")

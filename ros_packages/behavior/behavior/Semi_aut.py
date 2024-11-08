@@ -23,14 +23,14 @@ class AlignCorridor(BaseBehavior):
     def offset_callback(self, msg):
         # Met à jour l'offset du point de fuite
         self.x_offset = msg.data
-        self.update_alignment()
+        self.on_status()
 
     def vp_detected_callback(self, msg):
         # Met à jour l'état de détection du point de fuite
         self.vp_detected = msg.data
-        self.update_alignment()
+        self.on_status()
 
-    def update_alignment(self):
+    def on_status(self):
         # Vérifie si le point de fuite est détecté
         if self.vp_detected :
             if  self.active:
@@ -38,8 +38,9 @@ class AlignCorridor(BaseBehavior):
 
                 self.AlignCorridor_publisher.publish(Float32(data=angular_z_value))
             else:
-                # Si pas de point de fuite, ne publie rien (ou publiez un message avec `angular_z = 0` si besoin)
-                self.AlignCorridor_publisher.publish(Float32(data=0.0))
+                # # Si pas de point de fuite, ne publie rien (ou publiez un message avec `angular_z = 0` si besoin)
+                # self.AlignCorridor_publisher.publish(Float32(data=0.0))
+                pass
         else : 
             pass
 
@@ -69,14 +70,14 @@ class CenterCorridor(BaseBehavior):
     def angle_callback(self, msg):
         # Met à jour le ratio d'angle du point de fuite
         self.angle_ratio = msg.data
-        self.update_centering()
+        self.on_status()
 
     def vp_detected_callback(self, msg):
         # Met à jour l'état de détection du point de fuite
         self.vp_detected = msg.data
-        self.update_centering()
+        self.on_status()
 
-    def update_centering(self):
+    def on_status(self):
         # Vérifie si le point de fuite est détecté
         if self.vp_detected:
             if self.active:
@@ -84,7 +85,8 @@ class CenterCorridor(BaseBehavior):
                 self.Center_publisher.publish(Float32(data=linear_y_value))
             else:
                 # Si pas de point de fuite, ne publie rien (ou publiez un message avec `linear_y = 0` si besoin)
-                self.Center_publisher.publish(Float32(data=0.0))
+                # self.Center_publisher.publish(Float32(data=0.0))
+                pass
         else: 
             pass
 
@@ -114,9 +116,9 @@ class MoveForwardVp(BaseBehavior):
     def vp_detected_callback(self, msg):
         # Update the detection status of the vanishing point
         self.vp_detected = msg.data
-        self.update_forward_motion()
+        self.on_status()
 
-    def update_forward_motion(self):
+    def on_status(self):
         # Check if the vanishing point is detected
         if self.vp_detected:
             if self.active:
@@ -125,7 +127,9 @@ class MoveForwardVp(BaseBehavior):
                 self.MoveFoward_publisher.publish(Float32(data=forward_speed_value))
             else:
                 # Stop forward motion if no vanishing point is detected
-                self.MoveFoward_publisher.publish(Float32(data=0.0))
+                # self.MoveFoward_publisher.publish(Float32(data=0.0))
+                pass
+
         else :
             pass
 
