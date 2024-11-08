@@ -42,12 +42,12 @@
     <node pkg="behavior" exec="MoveForwardVp" name="MoveForwardVp"/>
 
     <node pkg="behavior" exec="UTurn" name="UTurn"/>
-    <!-- <node pkg="behavior" exec="SlideRight" name="SlideRight"/>
+    <node pkg="behavior" exec="SlideRight" name="SlideRight"/>
     <node pkg="behavior" exec="SlideLeft" name="SlideLeft"/>
-
+<!-- 
     <node pkg="behavior" exec="DoorCrossingLeft" name="DoorCrossingLeft"/>
-    <node pkg="behavior" exec="DoorCrossingRight" name="DoorCrossingRight"/> -->
-
+    <node pkg="behavior" exec="DoorCrossingRight" name="DoorCrossingRight"/>
+ -->
 
 
 

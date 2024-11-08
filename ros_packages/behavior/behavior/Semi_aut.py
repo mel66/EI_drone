@@ -4,7 +4,7 @@ from std_msgs.msg import Float32, Bool
 import time
 from .command import SLOW_SPEED
 import math
-from from .auto_off import AutoOffBehavior
+from  .auto_off import AutoOffBehavior
 
 
 #slide behavior
@@ -187,7 +187,7 @@ def UTurnmain(args=None):
 
 
 class Slide(BaseBehavior):
-    def __init__(self, slide_direction, orientation_duration=3.0, slide_duration=2.0, slide_speed=SLOW_SPEED):
+    def __init__(self, slide_direction, orientation_duration=2.25, slide_duration=2.0, slide_speed=SLOW_SPEED/2):
         super().__init__(f'Slide{slide_direction}')
         
         # Parameters for sliding and orientation
@@ -202,19 +202,15 @@ class Slide(BaseBehavior):
         self.linear_x_pub = self.create_publisher(Float32, 'linear_x', 10)
 
         #subscribe to odometry
-        self.sub_odom = self.create_subscription(Odometry, "/bebop/odom", self.on_odom, qos_profile=1)
+        self.sub_odom = self.create_subscription(Odometry, "/bebop/odom", self.on_odom_callback, qos_profile=1)
 
-        self.active = False
         self.odom = Twist()
 
-    def on_status_on(self):
-        self.active = True
-        self.perform_slide()
 
-    def on_odom(self,msg):
-        self.odom = msg.data
+    def on_odom_callback(self,msg):
+        self.odom = msg
 
-    def perform_slide(self):
+    def on_status(self):
         #valeurs a modifier
         DIST_TOLERANCE = 5
         ANGLE_TOLERANCE = 0.5
@@ -242,25 +238,16 @@ class Slide(BaseBehavior):
         end_time = time.time() + self.orientation_duration
         while time.time() < end_time and self.active:
             self.angular_z_pub.publish(Float32(data=rotation_speed))
-            self.linear_x_pub.publish(Float32(data=self.slide_speed))
+            # self.linear_x_pub.publish(Float32(data=self.slide_speed))
             time.sleep(0.1)
         
         # Arrêter la rotation
         self.angular_z_pub.publish(Float32(data=0.0))
         self.linear_x_pub.publish(Float32(data=0.0))
 
-        # Étape 3 : Glissement latéral en boucle ouverte
-        slide_speed = self.slide_speed if self.slide_direction == 'Left' else -self.slide_speed
-        end_time = time.time() + self.slide_duration
-        while time.time() < end_time and self.active:
-            self.linear_y_pub.publish(Float32(data=slide_speed))
-            time.sleep(0.1)
         
-        # Arrêter le glissement en boucle ouverte
-        self.linear_y_pub.publish(Float32(data=0.0))
 
         # Étape 4 : Boucle fermée pour rester aligné sur l'axe
-        self.active = True
         while self.active:
             # Position actuelle et direction du drone
             current_pos = self.odom.pose.pose.position
@@ -268,7 +255,10 @@ class Slide(BaseBehavior):
             
             # Calcul du vecteur PD (distance signée) et de l'angle θ
             P0 = self.initial_position  # Position initiale enregistrée au déclenchement de `slide`
-            v = self.axis_direction  # Vecteur directionnel de l’axe enregistré
+            self.quats = self.odom.pose.pose.orientation
+            qx, qy, qz, qw = self.quats.x, self.quats.y, self.quats.z, self.quats.w
+            v = Quaternion(qx, qy, qz, qw)
+
             OP0_D = Quaternion(current_pos.x - P0.x, current_pos.y - P0.y, 0.0)
             
             PD = (Quaternion(1, 0, 0) - v * v.T) * OP0_D
@@ -287,16 +277,22 @@ class Slide(BaseBehavior):
             
             # Condition de désactivation
             if abs(signed_distance) < DIST_TOLERANCE and abs(theta) < ANGLE_TOLERANCE:
-                self.active = False
                 break
 
             time.sleep(0.1)
-        
-        # Arrêter le comportement
-        self.linear_x_pub.publish(Float32(data=0.0))
+           # Arrêter la rotation
         self.angular_z_pub.publish(Float32(data=0.0))
-        self.active = False
+        self.linear_x_pub.publish(Float32(data=0.0))
 
+        # Étape 3 : Glissement latéral en boucle ouverte
+        slide_speed = self.slide_speed if self.slide_direction == 'Left' else -self.slide_speed
+        end_time = time.time() + self.slide_duration
+        while time.time() < end_time and self.active:
+            self.linear_y_pub.publish(Float32(data=slide_speed))
+            time.sleep(0.1)
+        
+        # Arrêter le glissement en boucle ouverte
+        self.linear_y_pub.publish(Float32(data=0.0))
 
 
 
