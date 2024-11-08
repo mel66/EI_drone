@@ -9,11 +9,12 @@
     </node>
         <!--  Apply the vanishing point detection  -->
     <node pkg="visual_processing" exec="vp_node" name="vp_node" output="screen">
-    <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
-    <remap from="video_out" to="/bebop/vp/compressed"/>
+        <remap from="video_in" to="/bebop/camera/image_raw/compressed"/>
+        <remap from="video_out" to="/bebop/vp/compressed"/>
     </node>
+
     <!--  Viewer for the images  -->
-    <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/webcam/image_raw"/>
+    <node pkg="rqt_image_view" exec="rqt_image_view" name="image_viewer" args="/bebop/vp/compressed"/>
 
 
     <node pkg ="rqt_gui" exec="rqt_gui"/>

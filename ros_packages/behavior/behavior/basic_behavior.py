@@ -32,8 +32,8 @@ class BaseBehavior(Node):
             self.send_status()
 
     def on_status(self):
-        #self.get_logger().info("This message must not be seen")
-        pass
+        # Placeholder for subclasses to override behavior upon status change
+        self.get_logger().info(f"{self.name} status changed to: {'active' if self.active else 'inactive'}")
         
     def send_status(self):
         status_msg = BehaviorStatus()
