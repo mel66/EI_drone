@@ -44,7 +44,7 @@ class VPNode(Node):
         self.ceiling = 50
         self.show_vanish = 1
         self.show_lines = 1
-        init_h_angle = 11
+        init_h_angle = 45
         init_v_angle = 11
         self.h_cos_tol = np.cos(init_h_angle*np.pi/180.0)
         self.v_cos_tol = np.cos(init_v_angle*np.pi/180.0)
