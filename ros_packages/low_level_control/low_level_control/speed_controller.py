@@ -142,6 +142,10 @@ class Speed_Controller(Node):
     def hover_callback(self, msg):
         # Callback for hover subscription
         self.hover = msg.data
+        self.linear_x = 0.0
+        self.linear_y = 0.0
+        self.linear_z = 0.0
+        self.angular_z =0.0
         # self.get_logger().info(f"Received hover message: {msg.data}")
 
     def linear_x_callback(self, msg):

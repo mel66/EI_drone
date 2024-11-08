@@ -146,21 +146,23 @@ def MoveForwardVpmain(args=None):
 
 class UTurn(AutoOffBehavior):
     def __init__(self):
-        super().__init__('UTurn',off_duration=5.0)
+        super().__init__('UTurn',off_duration=4.5)
         
         
         # Publisher for `angular_z`
         self.angular_z_pub = self.create_publisher(Float32, 'angular_z', 10)
 
-    def on_status_on(self):
+    def on_status(self):
          # Start rotating
         if self.active:
             self.off_timer.reset()
             self.angular_z_pub.publish(Float32(data=SLOW_SPEED))
 
         
-        else:        
+        else:  
             self.angular_z_pub.publish(Float32(data=0.0))
+      
+
 
 
 def UTurnmain(args=None):
